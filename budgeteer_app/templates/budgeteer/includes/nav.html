@@ -1,0 +1,20 @@
+<nav>
+    <div class="nav-wrapper teal lighten-2">
+        <div class="container">
+            {% if request.user.is_authenticated %}
+                <a href="/{{ request.user.username }}" class="brand-logo">Logo</a>
+            {% else %}
+                <a href="{%  url 'budgeteer:home' %}" class="brand-logo">Logo</a>
+            {% endif %}
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                {% if request.user.is_authenticated %}
+                    <li><a href="/{{ request.user.username }}">{{ request.user.display_name }}</a></li>
+                    <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="#">Test1</a></li>
+                    <li><a href="#">Test2</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
