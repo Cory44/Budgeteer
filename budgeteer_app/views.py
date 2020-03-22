@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .forms import CustomUserAuthForm, CustomUserCreationForm
+from .forms import CustomUserAuthForm, CustomUserCreationForm, AddAccountForm
 from django.contrib.auth import logout as lout, login as lin, authenticate
 from django.contrib import messages
+from .models import Account
 
 
 # Create your views here.
@@ -65,7 +66,32 @@ def register(request):
 
 
 def profile(request, username):
-    if request.user.is_authenticated:
-        return render(request, "budgeteer/profile.html", {"username": username})
+    if request.user.is_authenticated and request.user.username == username:
+        return render(request, "budgeteer/profile/profile.html", {"username": username,
+                                                                  "accounts": request.user.account_set.all()})
+    else:
+        return redirect('budgeteer:home')
+
+
+def add_account(request, username):
+    if request.user.is_authenticated and request.user.username == username:
+        if request.method == "POST":
+            form = AddAccountForm(request.POST)
+            if form.is_valid():
+                account = form.save(commit=False)
+                account.user = request.user
+                form.save()
+
+                messages.success(request, "Account added")
+                return render(request, "budgeteer/add_account.html", {"form": AddAccountForm()})
+            else:
+                for msg in form.errors:
+                    for message in form.errors[msg]:
+                        messages.error(request, f"{message}")
+
+                return render(request, 'budgeteer/add_account.html', {"form": form})
+
+        form = AddAccountForm()
+        return render(request, "budgeteer/add_account.html", {"form": form})
     else:
         return redirect('budgeteer:home')

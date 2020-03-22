@@ -1,0 +1,10 @@
+{% extends 'budgeteer/app.html' %}
+
+{% block content %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn waves-effect teal lighten-2" type="submit">Add Account</button>
+    </form>
+{% endblock %}

@@ -17,21 +17,28 @@ class User(AbstractUser):
 
 
 class AccountType(models.Model):
-    account_type = models.CharField(max_length=100)
+    account_type = models.CharField(max_length=100, blank=False, null=False)
 
     def __str__(self):
-        return self.account_type
+        return str(self.account_type)
 
 
 class Account(models.Model):
     account_name = models.CharField(max_length=100)
-    account_type = models.ForeignKey(AccountType, on_delete=models.CASCADE)
+    account_type = models.ForeignKey(AccountType, on_delete=models.CASCADE, blank=False, null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     starting_balance = models.DecimalField(max_digits=12, decimal_places=2)
     current_balance = models.DecimalField(max_digits=12, decimal_places=2)
 
     def __str__(self):
         return self.account_name
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        if self.current_balance == None:
+            self.current_balance = self.starting_balance
+
+        super().save()
 
     def transaction(self, amount):
         self.current_balance += amount
