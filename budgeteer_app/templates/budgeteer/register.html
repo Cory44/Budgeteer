@@ -2,12 +2,12 @@
 
 {% block content %}
     <div class="container">
-        <h3>Login</h3>
+        <h3>Register</h3>
         <br>
         <form method="POST">
             {% csrf_token %}
             {{ form.as_p }}
-            <button class="btn waves-effect teal lighten-2" type="submit">Sign In</button>
+            <button class="btn waves-effect teal lighten-2" type="submit">Register</button>
         </form>
     </div>
 {% endblock %}
