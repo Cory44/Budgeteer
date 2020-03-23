@@ -1,3 +1,13 @@
+<!-- Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+    <li><a href="#!">one</a></li>
+    <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
+    <li><a href="#!">two</a></li>
+    <li class="divider"></li>
+    <li><a href="#!">three</a></li>
+</ul>
+
+
 <nav>
     <div class="nav-wrapper teal lighten-2">
         <div class="container">
@@ -8,7 +18,12 @@
             {% endif %}
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 {% if request.user.is_authenticated %}
-                    <li><a href="/{{ request.user.username }}">{{ request.user.display_name }}</a></li>
+                    <li>
+                        <a class="dropdown-trigger" href="#" data-target="dropdown1">
+                            {{ request.user.display_name }}
+                            <!-- <i class="material-icons right">arrow_drop_down</i> -->
+                        </a>
+                    </li>
                     <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="#">Test1</a></li>

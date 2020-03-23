@@ -5,6 +5,27 @@ from django.contrib import messages
 from .models import Account
 
 
+def accountingNum(number):
+
+    if number >= 0:
+        strNum = str(number)
+        sign = ""
+    else:
+        strNum = str(number)[1:]
+        sign = "-"
+
+    if len(strNum) > 6:
+        if len(strNum) > 9:
+            acctNum = strNum[:len(strNum)-9] + "," + strNum[len(strNum)-9:len(strNum)-6] + "," + strNum[len(strNum)-6:]
+            return sign + acctNum
+        else:
+            acctNum = strNum[:len(strNum)-6] + "," + strNum[len(strNum)-6:]
+            return sign + acctNum
+
+    return sign + strNum
+
+
+
 # Create your views here.
 def home(request):
     if request.user.is_authenticated:
@@ -67,8 +88,18 @@ def register(request):
 
 def profile(request, username):
     if request.user.is_authenticated and request.user.username == username:
+        netWorth = 0
+        accounts = request.user.account_set.all()
+        userAccounts = []
+
+
+        for account in accounts:
+            netWorth += account.current_balance
+            userAccounts.append({"name": account.account_name, "balance": accountingNum(account.current_balance)})
+
         return render(request, "budgeteer/profile/profile.html", {"username": username,
-                                                                  "accounts": request.user.account_set.all()})
+                                                                  "accounts": userAccounts,
+                                                                  "netWorth": accountingNum(netWorth) })
     else:
         return redirect('budgeteer:home')
 
