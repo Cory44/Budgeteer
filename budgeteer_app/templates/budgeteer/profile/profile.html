@@ -4,21 +4,18 @@
 
     <h1 class="center-align teal-text text-darken-3">My Dashboard</h1>
 
-    <!-- Net Worth -->
     <div class="row">
         <div class="col s12 m4">
+
+            <!-- Net Worth -->
             <div class="card teal lighten-3">
                 <div class="card-content teal-text text-darken-3">
                     <span class="card-title"><strong>Net Worth</strong></span>
                     <h3 class="center-align">${{ netWorth }}</h3>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Accounts Card -->
-    <div class="row">
-        <div class="col s12 m4">
+            <!-- Accounts Card -->
             <div class="card teal lighten-3">
                 <div class="card-content teal-text text-darken-3">
                     <span class="card-title"><strong>Accounts</strong></span>
@@ -38,8 +35,33 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="col s12 m8"></div>
+        <div class="col s12 m8">
+            <div class="card teal lighten-3">
+                <div class="card-content teal-text text-darken-3">
+                    <span class="card-title"><strong>Transactions</strong></span>
+                    <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Notes</th>
+                        </tr>
+                        {% for account in accounts %}
+                            {% for transaction in account.account.transaction_set.all %}
+                                <tr>
+                                    <td>{{ transaction.date }}</td>
+                                    <td>{{ transaction.amount }}</td>
+                                    <td>{{ transaction.transaction_type.type }}</td>
+                                    <td>{{ transaction.category }}</td>
+                                    <td>{{ transaction.notes }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
 
 {% endblock %}

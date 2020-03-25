@@ -2,28 +2,29 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserAuthForm, CustomUserCreationForm, AddAccountForm
 from django.contrib.auth import logout as lout, login as lin, authenticate
 from django.contrib import messages
-from .models import Account
+# from .models import Account
 
 
-def accountingNum(number):
+def accounting_num(number):
 
     if number >= 0:
-        strNum = str(number)
+        str_num = str(number)
         sign = ""
     else:
-        strNum = str(number)[1:]
+        str_num = str(number)[1:]
         sign = "-"
 
-    if len(strNum) > 6:
-        if len(strNum) > 9:
-            acctNum = strNum[:len(strNum)-9] + "," + strNum[len(strNum)-9:len(strNum)-6] + "," + strNum[len(strNum)-6:]
-            return sign + acctNum
+    if len(str_num) > 6:
+        if len(str_num) > 9:
+            acct_num = str_num[:len(str_num)-9] + "," + \
+                      str_num[len(str_num)-9:len(str_num)-6] + "," + \
+                      str_num[len(str_num)-6:]
+            return sign + acct_num
         else:
-            acctNum = strNum[:len(strNum)-6] + "," + strNum[len(strNum)-6:]
-            return sign + acctNum
+            acct_num = str_num[:len(str_num)-6] + "," + str_num[len(str_num)-6:]
+            return sign + acct_num
 
-    return sign + strNum
-
+    return sign + str_num
 
 
 # Create your views here.
@@ -87,19 +88,26 @@ def register(request):
 
 
 def profile(request, username):
-    if request.user.is_authenticated and request.user.username == username:
-        netWorth = 0
-        accounts = request.user.account_set.all()
-        userAccounts = []
 
+    if username == "admin":
+        return redirect('budgeteer:admin')
+
+    if request.user.is_authenticated and request.user.username == username:
+        net_worth = 0
+        accounts = request.user.account_set.all()
+        user_accounts = []
 
         for account in accounts:
-            netWorth += account.current_balance
-            userAccounts.append({"name": account.account_name, "balance": accountingNum(account.current_balance)})
+            print(account.transaction_set.all())
+            net_worth += account.current_balance
+            user_accounts.append({"name": account.account_name,
+                                  "balance": accounting_num(account.current_balance),
+                                  "account": account})
 
         return render(request, "budgeteer/profile/profile.html", {"username": username,
-                                                                  "accounts": userAccounts,
-                                                                  "netWorth": accountingNum(netWorth) })
+                                                                  "user": request.user,
+                                                                  "accounts": user_accounts,
+                                                                  "netWorth": accounting_num(net_worth)})
     else:
         return redirect('budgeteer:home')
 

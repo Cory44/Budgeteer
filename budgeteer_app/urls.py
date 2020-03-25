@@ -1,10 +1,12 @@
 from django.urls import path
+from django.contrib import admin
 from django.views.generic import TemplateView
 from . import views
 
 app_name = 'budgeteer'
 
 urlpatterns = [
+    path('admin/', admin.site.urls, name="admin"),
     path('', views.home, name="home"),
     path('login/', views.login, name="login"),
     path('logout/', views.logout, name="logout"),

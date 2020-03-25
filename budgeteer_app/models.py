@@ -60,7 +60,7 @@ class TransactionType(models.Model):
     type_name = models.CharField(name="type", max_length=100)
 
     def __str__(self):
-        return self.type_name
+        return str(self.type)
 
 
 # TransactionCategory is refined subtype of TransactionType, for example a transaction can have a TransactionType of
