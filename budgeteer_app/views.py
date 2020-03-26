@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
-from .forms import CustomUserAuthForm, CustomUserCreationForm, AddAccountForm
+from .forms import CustomUserAuthForm, CustomUserCreationForm, AddAccountForm, AddTransactionForm
 from django.contrib.auth import logout as lout, login as lin, authenticate
 from django.contrib import messages
-# from .models import Account
+from .models import Transaction, Account, TransactionCategory
+from django.forms import modelformset_factory, inlineformset_factory
+from django.forms import Select
+
 
 
 def accounting_num(number):
@@ -122,15 +125,90 @@ def add_account(request, username):
                 form.save()
 
                 messages.success(request, "Account added")
-                return render(request, "budgeteer/add_account.html", {"form": AddAccountForm()})
+                return render(request, "budgeteer/profile/add_account.html", {"form": AddAccountForm()})
             else:
                 for msg in form.errors:
                     for message in form.errors[msg]:
                         messages.error(request, f"{message}")
 
-                return render(request, 'budgeteer/add_account.html', {"form": form})
+                return render(request, 'budgeteer/profile/add_account.html', {"form": form})
 
         form = AddAccountForm()
-        return render(request, "budgeteer/add_account.html", {"form": form})
+        return render(request, "budgeteer/profile/add_account.html", {"form": form})
+    else:
+        return redirect('budgeteer:home')
+
+
+def add_transaction(request, username):
+    # if request.user.is_authenticated and request.user.username == username:
+    #     if request.method == "POST":
+    #         print(request.POST)
+    #         form = AddTransactionForm(request.user, request.POST)
+    #         if form.is_valid():
+    #             form.save()
+    #
+    #             messages.success(request, "Transaction added, add another")
+    #             return render(request, "budgeteer/profile/add_transaction.html", {"form": AddTransactionForm(request.user)})
+    #         else:
+    #             for msg in form.errors:
+    #                 for message in form.errors[msg]:
+    #                     messages.error(request, f"{message}")
+    #
+    #             return render(request, "budgeteer/profile/add_transaction.html", {"Form": form})
+    #
+    #     forms = [AddTransactionForm(request.user)] * 2
+    #     return render(request, "budgeteer/profile/add_transaction.html", {"forms": forms})
+    # else:
+    #     return redirect('budgeteer:home')
+
+    if request.user.is_authenticated and request.user.username == username:
+        # formset = AddTransactionFormSet(request.user)
+
+        TransactionFormset = modelformset_factory(Transaction,
+                                                  exclude=(),
+                                                  widgets= {
+                                                      'account': Select(attrs={'style': 'display: block;'}),
+                                                      'transaction_type': Select(attrs={'style': 'display: block;'}),
+                                                      'category': Select(attrs={'style': 'display: block;'}),
+                                                  },
+                                                  labels={'date': '',
+                                                          'account': '',
+                                                          'amount': '',
+                                                          'transaction_type': '',
+                                                          'category': '',
+                                                          'notes': ''})
+
+        if request.method == 'POST':
+            formset = TransactionFormset(request.POST)
+            if formset.is_valid():
+                formset.save()
+                return redirect('budgeteer:home')
+            else:
+                for msg in formset.errors:
+                    for item in msg:
+                        print(item)
+                        messages.error(request, f"{msg[item]}")
+                    # formset = TransactionFormset (queryset=Transaction.objects.filter (account__user=request.user))
+                for msg in formset.non_form_errors():
+                    # print(msg)
+                    messages.error(request, f"{msg}")
+
+                return render(request, 'budgeteer/profile/add_transaction.html', {"formset": formset})
+        else:
+
+            data = {
+                'form-TOTAL_FORMS': '10',
+                'form-INITIAL_FORMS': '0',
+                'form-MAX_NUM_FORMS': ''}
+
+            formset = TransactionFormset(data, queryset=Transaction.objects.filter(account__user=request.user))
+
+            for form in formset:
+                form.fields['date'].widget.attrs['class'] = 'datepicker'
+                form.fields['account'].queryset = Account.objects.filter(user=request.user)
+                form.fields['category'].queryset = TransactionCategory.objects.filter(user=request.user)
+
+        return render(request, 'budgeteer/profile/add_transaction.html', {"formset": formset})
+
     else:
         return redirect('budgeteer:home')

@@ -1,7 +1,12 @@
 from django import forms
-from django.forms import ModelForm, Select
+from django.forms import ModelForm, Select, TextInput
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import User, Account, AccountType
+from .models import User, Account, Transaction, TransactionCategory
+from functools import partial
+from django.forms import modelformset_factory
+from django.forms import BaseModelFormSet
+
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
 
 # Form to create a user
@@ -19,6 +24,7 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ['username', 'password1', 'password2']
 
+
 class AddAccountForm(ModelForm):
     # starting_balance = forms.DecimalField(max_digits=12, decimal_places=2)
 
@@ -26,12 +32,41 @@ class AddAccountForm(ModelForm):
         model = Account
         fields = ['account_name', 'account_type', 'starting_balance']
         widgets = {
-            'account_type': Select(attrs={'style': 'display: block;'}) ,
+            'account_type': Select(attrs={'style': 'display: block;'}),
         }
 
-# class AddAccountForm(forms.Form):
-#     account_name = forms.CharField(max_length=100)
-#     account_type = forms.ModelChoiceField(queryset=AccountType.objects.all(), empty_label=None)
-#     starting_balance = forms.DecimalField(max_digits=12, decimal_places=2)
+
+class AddTransactionForm(ModelForm):
+    # date = forms.DateField(widget=forms.DateInput(attrs={'class': 'datepicker'}),    label='')
+
+    class Meta(ModelForm):
+        model = Transaction
+        fields = ['date', 'account', 'amount', 'transaction_type', 'category', 'notes']
+        # widgets = {
+        #     'account': Select(attrs={'style': 'display: block;'}),
+        #     # 'amount': TextInput(attrs={'class': 'col s12 m1'}),
+        #     'transaction_type': Select(attrs={'style': 'display: block;'}),
+        #     'category': Select(attrs={'style': 'display: block;'}),
+        #     # 'notes': TextInput(attrs={'class': 'col s12 m2'}),
+        # }
+        #
+        # labels = {'account': '',
+        #          'amount': '',
+        #          'transaction_type': '',
+        #          'category': '',
+        #          'notes': ''}
+
+    def __init__(self, user, *args, **kwargs):
+        super(AddTransactionForm, self).__init__(*args, **kwargs)
+        self.fields['account'].queryset = Account.objects.filter(user=user)
+        self.fields['category'].queryset = TransactionCategory.objects.filter(user=user)
+
+
+# class AddTransactionFormSet(BaseModelFormSet):
 #
+#     class Meta(BaseModelFormSet):
+#         pass
 #
+#     def __init__(self , user , *args , **kwargs):
+#         super().__init__ (*args , **kwargs)
+#         self.queryset = Transaction.objects.filter(account__user=user)

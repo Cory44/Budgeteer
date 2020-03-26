@@ -23,7 +23,7 @@ class User(AbstractUser):
 # investment, TFSA, RRSP, etc. These account types will be a global list of types, set by an administrator (i.e. a user
 # will not be able to set their own account types)
 class AccountType(models.Model):
-    account_type = models.CharField(max_length=100, blank=False, null=False)
+    account_type = models.CharField(max_length=100)
 
     def __str__(self):
         return str(self.account_type)
@@ -33,7 +33,7 @@ class AccountType(models.Model):
 # current_balance will only update when a user submits a transaction to that account.
 class Account(models.Model):
     account_name = models.CharField(max_length=100)
-    account_type = models.ForeignKey(AccountType, on_delete=models.CASCADE, blank=False, null=False)
+    account_type = models.ForeignKey(AccountType, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     starting_balance = models.DecimalField(max_digits=12, decimal_places=2)
     current_balance = models.DecimalField(max_digits=12, decimal_places=2)
@@ -57,10 +57,10 @@ class Account(models.Model):
 # Transfer. The types will be global, set by an administrator (i.e. a user will not be able to set their own account
 # types)
 class TransactionType(models.Model):
-    type_name = models.CharField(name="type", max_length=100)
+    type_name = models.CharField(max_length=100)
 
     def __str__(self):
-        return str(self.type)
+        return str(self.type_name)
 
 
 # TransactionCategory is refined subtype of TransactionType, for example a transaction can have a TransactionType of
@@ -69,7 +69,7 @@ class TransactionType(models.Model):
 class TransactionCategory(models.Model):
     transaction_type = models.ForeignKey(TransactionType, on_delete=models.CASCADE, blank=False, null=False)
     category = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False, default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return self.category
@@ -91,14 +91,10 @@ class Transaction(models.Model):
 
     def save(self, *args, **kwargs):
         amount = self.amount
-        print(self.transaction_type == "Expense", amount, type(str(self.transaction_type)))
 
         if str(self.transaction_type) == "Expense" or (self.transaction_type == "Transfer"
                                                        and self.category[:2] == "To"):
             amount = -amount
-            print("Here")
 
-        print(amount)
         self.account.transaction(amount)
-
         super().save(*args, **kwargs)

@@ -53,13 +53,15 @@
                                 <tr>
                                     <td>{{ transaction.date }}</td>
                                     <td>{{ transaction.amount }}</td>
-                                    <td>{{ transaction.transaction_type.type }}</td>
+                                    <td>{{ transaction.transaction_type }}</td>
                                     <td>{{ transaction.category }}</td>
                                     <td>{{ transaction.notes }}</td>
                                 </tr>
                             {% endfor %}
                         {% endfor %}
                     </table>
+                    <br>
+                    <a href="/{{ username }}/add_transaction" class="teal-text text-darken-1">Add Transactions</a>
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib import admin
-from django.views.generic import TemplateView
+# from django.views.generic import TemplateView
 from . import views
 
 app_name = 'budgeteer'
@@ -13,4 +13,5 @@ urlpatterns = [
     path('register/', views.register, name="register"),
     path('<username>/', views.profile, name="profile"),
     path('<username>/add_account', views.add_account, name="add_account"),
+    path('<username>/add_transaction', views.add_transaction, name="add_account"),
 ]
