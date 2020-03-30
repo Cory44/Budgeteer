@@ -66,13 +66,14 @@ class Account(models.Model):
 
         if created:
             TransactionCategory.objects.create(category="From " + self.account_name,
-                                transaction_type=TransactionType.objects.get(type_name="Transfer"),
-                                user=self.user)
+                                               transaction_type=TransactionType.objects.get(type_name="Transfer"),
+                                               user=self.user,
+                                               account=self)
 
-            TransactionCategory.objects.create (category="To " + self.account_name ,
-                                                transaction_type=TransactionType.objects.get (type_name="Transfer") ,
-                                                user=self.user)
-
+            TransactionCategory.objects.create(category="To " + self.account_name,
+                                               transaction_type=TransactionType.objects.get(type_name="Transfer"),
+                                               user=self.user,
+                                               account=self)
 
     def transaction(self, amount):
         self.current_balance += amount
@@ -96,6 +97,7 @@ class TransactionCategory(models.Model):
     transaction_type = models.ForeignKey(TransactionType, on_delete=models.CASCADE, blank=False, null=False)
     category = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.category
@@ -121,8 +123,8 @@ class Transaction(models.Model):
     def save(self, *args, **kwargs):
         amount = self.amount
 
-        if str(self.transaction_type) == "Expense" or (self.transaction_type == "Transfer"
-                                                       and self.category[:2] == "To"):
+        if str(self.transaction_type) == "Expense" or (str(self.transaction_type) == "Transfer"
+                                                       and self.category.category[:2] == "To"):
             amount = -amount
 
         self.account.transaction(amount)

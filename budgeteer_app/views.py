@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserAuthForm, CustomUserCreationForm, AddAccountForm, AddTransactionForm
 from django.contrib.auth import logout as lout, login as lin, authenticate
 from django.contrib import messages
-from .models import Transaction, Account, TransactionCategory
+from .models import Transaction, Account, TransactionCategory, TransactionType
 from django.forms import modelformset_factory
 # from django.forms import Select
 
@@ -154,6 +154,24 @@ def add_transaction(request, username, account_name):
                 transactions = formset.save(commit=False)
                 for transaction in transactions:
                     transaction.account = Account.objects.get(account_name=account_name)
+
+                    if transaction.transaction_type.type_name == "Transfer":
+                        to_account_name = transaction.category.category.split(" ")[1]
+                        to_account = Account.objects.get(user=request.user, account_name=to_account_name)
+
+                        if transaction.category.category[:2] == "To":
+                            transfer_type = "From " + transaction.account.account_name
+                        else:
+                            transfer_type = "To " + transaction.account.account_name
+
+                        Transaction.objects.create(account=to_account,
+                                                   date=transaction.date,
+                                                   amount=transaction.amount,
+                                                   transaction_type=transaction.transaction_type,
+                                                   category=TransactionCategory.objects.get(user=request.user,
+                                                                                            category=transfer_type),
+                                                   notes="Transfer")
+
                     transaction.save()
                 # transactions.save()
 
@@ -198,7 +216,16 @@ def account(request, username, account_name):
 def categories(request, username):
     if request.user.is_authenticated and request.user.username == username:
         user = request.user
-        categories = TransactionCategory.objects.filter(user=user)
-        return render(request, 'budgeteer/profile/categories.html', {"categories": categories})
+        expense = TransactionType.objects.get(type_name="Expense")
+        income = TransactionType.objects.get(type_name="Income")
+        transfer = TransactionType.objects.get(type_name="Transfer")
+
+        expense_categories = TransactionCategory.objects.filter(user=user, transaction_type=expense)
+        income_categories = TransactionCategory.objects.filter(user=user, transaction_type=income)
+        transfer_categories = TransactionCategory.objects.filter(user=user, transaction_type=transfer)
+
+        return render(request, 'budgeteer/profile/categories.html', {"expense_categories": expense_categories,
+                                                                     "income_categories": income_categories,
+                                                                     "transfer_categories": transfer_categories})
     else:
         return redirect('budgeteer:home')

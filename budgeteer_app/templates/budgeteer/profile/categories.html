@@ -8,8 +8,8 @@
                 <div class="card-content">
                     <span class="card-title">Expense Categories</span>
                     <div class="row">
-                        {% for category in categories %}
-                            <p class="col s8">{{ category.transaction_type }}: {{ category.category }}</p>
+                        {% for category in expense_categories %}
+                            <p class="col s8">{{ category.category }}</p>
                             <button class="btn waves-effect teal lighten-2 col s4">Delete</button>
                         {% endfor %}
                     </div>
@@ -22,8 +22,8 @@
                 <div class="card-content">
                     <span class="card-title">Income Categories</span>
                     <div class="row">
-                        {% for category in categories %}
-                            <p class="col s8">{{ category.transaction_type }}: {{ category.category }}</p>
+                        {% for category in income_categories %}
+                            <p class="col s8">{{ category.category }}</p>
                             <button class="btn waves-effect teal lighten-2 col s4">Delete</button>
                         {% endfor %}
                     </div>
@@ -38,8 +38,8 @@
                     <P>Transfer categories are not editable, they are generated based on the accounts you have</P>
                     <br>
                     <div class="row">
-                        {% for category in categories %}
-                            <p class="col s8">{{ category.transaction_type }}: {{ category.category }}</p>
+                        {% for category in transfer_categories %}
+                            <p class="col s8">{{ category.category }}</p>
                             <button class="btn waves-effect teal lighten-2 col s4">Delete</button>
                         {% endfor %}
                     </div>
