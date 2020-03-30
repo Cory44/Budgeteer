@@ -13,10 +13,24 @@ class User(AbstractUser):
         return str(self.username)
 
     def save(self, *args, **kwargs):
-        if self.pk is None:
+
+        created = not self.pk
+        if created:
             self.display_name = self.username
             self.username = self.username.lower()
         super(self.__class__, self).save(*args, **kwargs)
+
+        if created:
+            income = TransactionType.objects.get(type_name='Income')
+            expense = TransactionType.objects.get(type_name='Expense')
+
+            TransactionCategory.objects.create(user=self, transaction_type=expense, category="Groceries")
+            TransactionCategory.objects.create(user=self, transaction_type=expense, category="Rent/Mortgage")
+            TransactionCategory.objects.create(user=self, transaction_type=expense, category="Food & Drink")
+            TransactionCategory.objects.create(user=self, transaction_type=expense, category="Personal Products")
+            TransactionCategory.objects.create(user=self, transaction_type=expense, category="House Bills")
+            TransactionCategory.objects.create(user=self, transaction_type=expense, category="Gifts")
+            TransactionCategory.objects.create(user=self, transaction_type=income, category="Pay")
 
 
 # AccountType class only includes one field. The account_type objects include types like chequing, savings, credit card,
@@ -43,10 +57,22 @@ class Account(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        if self.current_balance is None:
+        created = not self.pk
+
+        if created:
             self.current_balance = self.starting_balance
 
         super().save()
+
+        if created:
+            TransactionCategory.objects.create(category="From " + self.account_name,
+                                transaction_type=TransactionType.objects.get(type_name="Transfer"),
+                                user=self.user)
+
+            TransactionCategory.objects.create (category="To " + self.account_name ,
+                                                transaction_type=TransactionType.objects.get (type_name="Transfer") ,
+                                                user=self.user)
+
 
     def transaction(self, amount):
         self.current_balance += amount
@@ -85,6 +111,9 @@ class Transaction(models.Model):
     transaction_type = models.ForeignKey(TransactionType, on_delete=models.CASCADE)
     category = models.ForeignKey(TransactionCategory, on_delete=models.CASCADE)
     notes = models.CharField(max_length=250)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
         return str(self.date) + " | " + str(self.amount) + ": " + self.notes

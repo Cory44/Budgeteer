@@ -1,0 +1,33 @@
+{% extends 'budgeteer/app.html' %}
+
+{% block content %}
+    <div class="row">
+        <h3 class="col s12 center-align">{{ account.account_name }}</h3>
+        <h6 class="col s6">Balance: {{ account.current_balance }}</h6>
+        <h6 class="col s6 right-align">
+            <a href="/{{ user.username }}/{{ account.account_name }}/add_transaction"
+               class="teal-text text-darken-1">
+                Add Transactions
+            </a>
+        </h6>
+    </div>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Transaction Type</th>
+            <th>Category</th>
+            <th>Notes
+            <th>Delete</th>
+        </tr>
+        {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.amount }}</td>
+                <td>{{ transaction.transaction_type }}</td>
+                <td>{{ transaction.category }}</td>
+                <td>{{ transaction.notes }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

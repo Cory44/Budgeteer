@@ -5,46 +5,19 @@
 
 
     <form method="POST">
-{#        <table>#}
-{#            <tr>#}
-{#                <th>Date</th>#}
-{#                <th>Account</th>#}
-{#                <th>Amount</th>#}
-{#                <th>Type</th>#}
-{#                <th>Category</th>#}
-{#                <th>Notes</th>#}
-{#            </tr>#}
-{#            {% for form in forms %}#}
-{#                <tr>#}
-{#                    <script>#}
-{#                        $(document).ready(function() {#}
-{#                            $('.datepicker').datepicker();#}
-{#                        });#}
-{#                    </script>#}
-{#                    {% csrf_token %}#}
-{#                    <td class="fieldWrapper">{{ form.date }}</td>#}
-{#                    <td class="fieldWrapper">{{ form.account }}</td>#}
-{#                    <td class="fieldWrapper">{{ form.amount }}</td>#}
-{#                    <td class="fieldWrapper">{{ form.transaction_type }}</td>#}
-{#                    <td class="fieldWrapper">{{ form.category }}</td>#}
-{#                    <td class="fieldWrapper">{{ form.notes }}</td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
-{#        </table>#}
         {{ formset.management_form }}
         <style>
             input[type="text"] {
-                font-size: 80% !important;
+                font-size: 95% !important;
             }
 
             input[type="number"] {
-                font-size: 80% !important;
+                font-size: 95% !important;
             }
         </style>
         <table style="font-size: 80% !important;">
             <tr>
                 <th>Date</th>
-                <th>Account</th>
                 <th>Amount</th>
                 <th>Transaction Type</th>
                 <th>Category</th>
@@ -59,12 +32,12 @@
                     });
                 </script>
                 <tr>
-                    <td>{{ form.date }}</td>
-                    <td>{{ form.account }}</td>
-                    <td>{{ form.amount }}</td>
-                    <td>{{ form.transaction_type }}</td>
-                    <td>{{ form.category }}</td>
-                    <td>{{ form.notes }}</td>
+{#                    <td hidden="True">{{ form.account }}</td>#}
+                    <td width="10%">{{ form.date }}</td>
+                    <td width="10%">{{ form.amount }}</td>
+                    <td width="15%">{{ form.transaction_type }}</td>
+                    <td width="15%">{{ form.category }}</td>
+                    <td width="35%">{{ form.notes }}</td>
                 </tr>
             {% endfor %}
         </table>

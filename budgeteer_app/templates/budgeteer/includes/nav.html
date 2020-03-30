@@ -1,18 +1,17 @@
 <!-- Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
-    <li><a href="#!">one</a></li>
-    <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
-    <li><a href="#!">two</a></li>
+    <li><a href="#">Edit Profile</a></li>
     <li class="divider"></li>
-    <li><a href="#!">three</a></li>
+    <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
 </ul>
 
 
 <nav>
-    <div class="nav-wrapper teal lighten-2">
+    <div class="nav-wrapper teal lighten-3">
         <div class="container">
             {% if request.user.is_authenticated %}
                 <a href="/{{ request.user.username }}" class="brand-logo">Logo</a>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             {% else %}
                 <a href="{%  url 'budgeteer:home' %}" class="brand-logo">Logo</a>
             {% endif %}
@@ -21,15 +20,29 @@
                     <li>
                         <a class="dropdown-trigger" href="#" data-target="dropdown1">
                             {{ request.user.display_name }}
-                            <!-- <i class="material-icons right">arrow_drop_down</i> -->
                         </a>
                     </li>
-                    <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
                 {% else %}
-                    <li><a href="#">Test1</a></li>
-                    <li><a href="#">Test2</a></li>
+                    <li><a href="{% url 'budgeteer:login' %}">Login</a></li>
+                    <li><a href="{% url 'budgeteer:register' %}">Register</a></li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
+
+<ul class="sidenav" id="mobile-demo">
+    <li><a href="#">Edit Profile</a></li>
+    <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
+</ul>
+
+<script>
+    $(document).ready(function() {
+        $(".dropdown-trigger").dropdown();
+    });
+
+    $(document).ready(function(){
+        $('.sidenav').sidenav();
+    });
+
+</script>
