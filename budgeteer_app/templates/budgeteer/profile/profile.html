@@ -22,7 +22,7 @@
                     <div class="row">
                         {% for account in accounts %}
 {#                            <p class="col s8">{{ account.name }}: </p>#}
-                            <a href="/{{ username }}/{{ account.name }}" class="col s8 teal-text text-darken-1">
+                            <a href="/{{ request.user.username }}/{{ account.name }}" class="col s8 teal-text text-darken-1">
                                 {{ account.name }}
                             </a>
 
@@ -35,7 +35,7 @@
                             <p class="col s12">No Accounts</p>
                         {% endfor %}
                     </div>
-                    <a href="/{{ username }}/add_account" class="teal-text text-darken-1">Add an Account</a>
+                    <a href="add_account" class="teal-text text-darken-1">Add an Account</a>
                 </div>
             </div>
 
@@ -70,6 +70,8 @@
 {#                </div>#}
 {#            </div>#}
 {#        </div>#}
+
+            <!-- Transaction Categories -->
             <div class="card teal lighten-3">
                 <div class="card-content">
                     <span class="card-title">
@@ -79,6 +81,7 @@
                     </span>
                 </div>
             </div>
+
         </div>
 
 {% endblock %}

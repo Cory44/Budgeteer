@@ -5,7 +5,7 @@
         <h3 class="col s12 center-align">{{ account.account_name }}</h3>
         <h6 class="col s6">Balance: {{ account.current_balance }}</h6>
         <h6 class="col s6 right-align">
-            <a href="/{{ user.username }}/{{ account.account_name }}/add_transaction"
+            <a href="/{{ request.user.username }}/{{ account.account_name }}/add_transaction"
                class="teal-text text-darken-1">
                 Add Transactions
             </a>

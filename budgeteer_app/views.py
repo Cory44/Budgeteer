@@ -2,31 +2,10 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserAuthForm, CustomUserCreationForm, AddAccountForm, AddTransactionForm
 from django.contrib.auth import logout as lout, login as lin, authenticate
 from django.contrib import messages
-from .models import Transaction, Account, TransactionCategory, TransactionType
+from .models import Transaction, TransactionCategory, TransactionType
 from django.forms import modelformset_factory
-# from django.forms import Select
-
-
-def accounting_num(number):
-
-    if number >= 0:
-        str_num = str(number)
-        sign = ""
-    else:
-        str_num = str(number)[1:]
-        sign = "-"
-
-    if len(str_num) > 6:
-        if len(str_num) > 9:
-            acct_num = str_num[:len(str_num)-9] + "," + \
-                      str_num[len(str_num)-9:len(str_num)-6] + "," + \
-                      str_num[len(str_num)-6:]
-            return sign + acct_num
-        else:
-            acct_num = str_num[:len(str_num)-6] + "," + str_num[len(str_num)-6:]
-            return sign + acct_num
-
-    return sign + str_num
+from .view_helpers.add_transaction import save_form
+from .view_helpers.general import form_errors, accounting_num
 
 
 # Create your views here.
@@ -79,10 +58,7 @@ def register(request):
                 messages.success(request, f"New account created: {user.display_name}")
                 return redirect(f'/{user.username}')
             else:
-                for msg in form.errors:
-                    for message in form.errors[msg]:
-                        messages.error(request, f"{message}")
-
+                form_errors(request, form.errors)
                 return render(request, 'budgeteer/register.html', {"form": form})
 
         form = CustomUserCreationForm()
@@ -99,15 +75,13 @@ def profile(request, username):
         accounts = request.user.account_set.all()
         user_accounts = []
 
-        for account in accounts:
-            net_worth += account.current_balance
-            user_accounts.append({"name": account.account_name,
-                                  "balance": accounting_num(account.current_balance),
-                                  "account": account})
+        for each_account in accounts:
+            net_worth += each_account.current_balance
+            user_accounts.append({"name": each_account.account_name,
+                                  "balance": accounting_num(each_account.current_balance),
+                                  "account": each_account})
 
-        return render(request, "budgeteer/profile/profile.html", {"username": username,
-                                                                  "user": request.user,
-                                                                  "accounts": user_accounts,
+        return render(request, "budgeteer/profile/profile.html", {"accounts": user_accounts,
                                                                   "netWorth": accounting_num(net_worth)})
     else:
         return redirect('budgeteer:home')
@@ -118,21 +92,18 @@ def add_account(request, username):
         if request.method == "POST":
             form = AddAccountForm(request.POST)
             if form.is_valid():
-                account = form.save(commit=False)
-                if len(request.user.account_set.filter(account_name=account.account_name)) > 0:
+                display_account = form.save(commit=False)
+                if len(request.user.account_set.filter(account_name=display_account.account_name)) > 0:
                     messages.error(request, "Account name already taken")
                     return render(request, 'budgeteer/profile/account/add_account.html', {"form": form})
 
-                account.user = request.user
+                display_account.user = request.user
                 form.save()
 
                 messages.success(request, "Account added")
-                return render(request, "budgeteer/profile/account/add_account.html", {"form": AddAccountForm()})
+                return redirect ('budgeteer:home')
             else:
-                for msg in form.errors:
-                    for message in form.errors[msg]:
-                        messages.error(request, f"{message}")
-
+                form_errors(request, form.errors)
                 return render(request, 'budgeteer/profile/account/add_account.html', {"form": form})
 
         form = AddAccountForm()
@@ -143,42 +114,14 @@ def add_account(request, username):
 
 def add_transaction(request, username, account_name):
     if request.user.is_authenticated and request.user.username == username:
-
         transaction_formset = modelformset_factory(Transaction, form=AddTransactionForm)
 
         if request.method == 'POST':
-
             formset = transaction_formset(request.POST)
 
             if formset.is_valid():
-                transactions = formset.save(commit=False)
-                for transaction in transactions:
-                    transaction.account = Account.objects.get(account_name=account_name)
-
-                    if transaction.transaction_type.type_name == "Transfer":
-                        to_account_name = transaction.category.category.split(" ")[1]
-                        to_account = Account.objects.get(user=request.user, account_name=to_account_name)
-
-                        if transaction.category.category[:2] == "To":
-                            transfer_type = "From " + transaction.account.account_name
-                        else:
-                            transfer_type = "To " + transaction.account.account_name
-
-                        Transaction.objects.create(account=to_account,
-                                                   date=transaction.date,
-                                                   amount=transaction.amount,
-                                                   transaction_type=transaction.transaction_type,
-                                                   category=TransactionCategory.objects.get(user=request.user,
-                                                                                            category=transfer_type),
-                                                   notes="Transfer")
-
-                    transaction.save()
-                # transactions.save()
-
-                return redirect ('budgeteer:home')
-
+                return save_form(request, formset, account_name)
             else:
-                print(formset.errors)
                 for msg in formset.errors:
                     for item in msg:
                         messages.error(request, f"{msg[item][0]}")
@@ -206,11 +149,11 @@ def add_transaction(request, username, account_name):
 
 
 def account(request, username, account_name):
-    account = request.user.account_set.filter(account_name=account_name)[0]
-    transactions = account.transaction_set.all()
-    return render(request, "budgeteer/profile/account/account.html", {"account": account,
+    display_account = request.user.account_set.filter(account_name=account_name)[0]
+    transactions = display_account.transaction_set.all()
+    return render(request, "budgeteer/profile/account/account.html", {"account": display_account,
                                                                       "transactions": transactions,
-                                                                      "user": request.user})
+                                                                      "username": username})
 
 
 def categories(request, username):
