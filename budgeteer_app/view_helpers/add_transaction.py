@@ -20,13 +20,14 @@ def transfer(request, transaction):
 
 def save_form(request, formset, account_name):
     transactions = formset.save(commit=False)
+    account = Account.objects.get(account_name=account_name)
 
     for transaction in transactions:  # Add transaction to
-        transaction.account = Account.objects.get(account_name=account_name)
+        transaction.account = account
 
         if transaction.transaction_type.type_name == "Transfer":
             transfer(request, transaction)
 
         transaction.save()
 
-    return redirect('budgeteer:home')
+    return redirect('budgeteer:account', request.user.username, account)

@@ -27,6 +27,11 @@
                 <td>{{ transaction.transaction_type }}</td>
                 <td>{{ transaction.category }}</td>
                 <td>{{ transaction.notes }}</td>
+                <td>
+                    <a href="/transaction/{{ account.pk }}/{{ transaction.pk }}">
+                        <button class="" type="submit">Delete</button>
+                    </a>
+                </td>
             </tr>
         {% endfor %}
     </table>

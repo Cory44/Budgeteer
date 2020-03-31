@@ -11,9 +11,11 @@ urlpatterns = [
     path('login/', views.login, name="login"),
     path('logout/', views.logout, name="logout"),
     path('register/', views.register, name="register"),
+    path('category/<pk>', views.delete_category, name='delete_category'),
+    path('transaction/<account_pk>/<transaction_pk>', views.delete_transaction, name='delete_transaction'),
     path('<username>/', views.profile, name="profile"),
     path('<username>/add_account', views.add_account, name="add_account"),
     path('<username>/categories', views.categories, name='categories'),
     path('<username>/<account_name>', views.account, name="account"),
-    path('<username>/<account_name>/add_transaction', views.add_transaction, name="add_transaction2"),
+    path('<username>/<account_name>/add_transaction', views.add_transaction, name="add_transaction"),
 ]

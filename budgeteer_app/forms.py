@@ -1,7 +1,7 @@
 # from django import forms
 from django.forms import ModelForm, Select, DateField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import User, Account, Transaction
+from .models import User, Account, Transaction, TransactionCategory
 from django import forms
 
 
@@ -41,4 +41,9 @@ class AddTransactionForm(ModelForm):
 
         # date = forms.DateField(widget=forms.DateInput(format='%d %B, %Y'), input_formats=['%d %B, %Y',],)
 
+
+class AddExpenseCategory(ModelForm):
+    class Meta:
+        model = TransactionCategory
+        fields = ('category',)
 

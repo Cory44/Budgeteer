@@ -1,5 +1,6 @@
 <!-- Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
+    <li><a href="/">Dashboard</a></li>
     <li><a href="#">Edit Profile</a></li>
     <li><a href="categories">Edit Transaction Categories</a></li>
     <li><a href="add_account">Add an Account</a></li>
@@ -20,7 +21,7 @@
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 {% if request.user.is_authenticated %}
                     <li style="min-width: 150px;">
-                        <a class="dropdown-trigger" href="#" data-target="dropdown1">
+                        <a class="dropdown-trigger" href="" data-target="dropdown1">
                             {{ request.user.display_name }}
                         </a>
                     </li>
@@ -40,7 +41,7 @@
 
 <script>
     $(document).ready(function() {
-        $(".dropdown-trigger").dropdown();
+        $(".dropdown-trigger").dropdown({ hover: true });
     });
 
     $(document).ready(function(){
