@@ -35,7 +35,7 @@
                             <p class="col s12">No Accounts</p>
                         {% endfor %}
                     </div>
-                    <a href="add_account" class="teal-text text-darken-1">Add an Account</a>
+                    <a href="/{{ request.user.username }}/add_account" class="teal-text text-darken-1">Add an Account</a>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
             <div class="card teal lighten-3">
                 <div class="card-content">
                     <span class="card-title">
-                        <a href="categories" class="teal-text text-darken-1">
+                        <a href="/{{ request.user.username }}/categories" class="teal-text text-darken-1">
                             <strong>Edit Transaction Categories</strong>
                         </a>
                     </span>
@@ -83,5 +83,19 @@
             </div>
 
         </div>
+
+        <div class="col m8 s12">
+            <div class="card teal lighten-3">
+                <div class="card-content">
+                    {% if accounts %}
+                        <img src="{% url 'budgeteer:graph_view' %}" alt="Graph"/>
+                    {% else %}
+                        <p>No data to display: <a href="/{{ request.user.username }}/add_account"
+                                                   class="teal-text text-darken-1">Add an Account</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

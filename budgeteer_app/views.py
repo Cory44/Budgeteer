@@ -83,7 +83,7 @@ def profile(request, username):
                                   "account": each_account})
 
         return render(request, "budgeteer/profile/profile.html", {"accounts": user_accounts,
-                                                                  "netWorth": accounting_num(net_worth)})
+                                                                  "netWorth": accounting_num(net_worth), })
     else:
         return redirect('budgeteer:home')
 
@@ -237,3 +237,7 @@ def delete_transaction(request, account_pk, transaction_pk):
 
     messages.success(request, "Transaction Deleted")
     return redirect(f'/{request.user.username}/{transaction_account.account_name}')
+
+
+def graph_view(request):
+    return graph(request)
