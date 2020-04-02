@@ -4,7 +4,12 @@ from django.shortcuts import redirect
 
 # Helps create an offsetting transaction for transfer transactions between a users accounts
 def transfer(request, transaction):
-    to_account_name = transaction.category.category.split(" ")[1]
+
+    if transaction.category.category[:2] == "To":
+        to_account_name = transaction.category.category[3:]
+    else:
+        to_account_name = transaction.category.category[5:]
+
     to_account = Account.objects.get(user=request.user, account_name=to_account_name)
 
     if transaction.category.category[:2] == "To":

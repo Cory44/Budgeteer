@@ -5,17 +5,19 @@
     <h1 class="center-align">My Dashboard</h1>
 
     <div class="row">
-        <div class="col s12 m4">
 
-            <!-- Net Worth -->
+        <!-- Net Worth -->
+        <div class="col s12 m4">
             <div class="card teal lighten-3">
                 <div class="card-content">
                     <span class="card-title"><strong>Net Worth</strong></span>
                     <h3 class="center-align">${{ netWorth }}</h3>
                 </div>
             </div>
+        </div>
 
-            <!-- Accounts Card -->
+        <!-- Accounts Card -->
+        <div class="col s12 m4">
             <div class="card teal lighten-3">
                 <div class="card-content">
                     <span class="card-title"><strong>Accounts</strong></span>
@@ -38,40 +40,10 @@
                     <a href="/{{ request.user.username }}/add_account" class="teal-text text-darken-1">Add an Account</a>
                 </div>
             </div>
+        </div>
 
-
-        <!-- Transactions -->
-{#        <div class="col s12 m8">#}
-{#            <div class="card teal lighten-3">#}
-{#                <div class="card-content">#}
-{#                    <span class="card-title"><strong>Transactions</strong></span>#}
-{#                    <table>#}
-{#                        <tr>#}
-{#                            <th>Date</th>#}
-{#                            <th>Amount</th>#}
-{#                            <th>Type</th>#}
-{#                            <th>Category</th>#}
-{#                            <th>Notes</th>#}
-{#                        </tr>#}
-{#                        {% for account in accounts %}#}
-{#                            {% for transaction in account.account.transaction_set.all %}#}
-{#                                <tr>#}
-{#                                    <td>{{ transaction.date }}</td>#}
-{#                                    <td>{{ transaction.amount }}</td>#}
-{#                                    <td>{{ transaction.transaction_type }}</td>#}
-{#                                    <td>{{ transaction.category }}</td>#}
-{#                                    <td>{{ transaction.notes }}</td>#}
-{#                                </tr>#}
-{#                            {% endfor %}#}
-{#                        {% endfor %}#}
-{#                    </table>#}
-{#                    <br>#}
-{#                    <a href="/{{ username }}/add_transaction" class="teal-text text-darken-1">Add Transactions</a>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-
-            <!-- Transaction Categories -->
+        <!-- Transaction Categories -->
+        <div class="col s12 m4">
             <div class="card teal lighten-3">
                 <div class="card-content">
                     <span class="card-title">
@@ -81,14 +53,13 @@
                     </span>
                 </div>
             </div>
-
         </div>
 
-        <div class="col m8 s12">
+        <div class="col s12">
             <div class="card teal lighten-3">
                 <div class="card-content">
                     {% if accounts %}
-                        <img src="{% url 'budgeteer:graph_view' %}" alt="Graph"/>
+                        <img src="{% url 'budgeteer:graph_view' %}" alt="graph" style="width: 100%;" />
                     {% else %}
                         <p>No data to display: <a href="/{{ request.user.username }}/add_account"
                                                    class="teal-text text-darken-1">Add an Account</a></p>

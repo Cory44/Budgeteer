@@ -1,6 +1,5 @@
 from django.contrib import messages
 
-
 # Displays error messages in forms
 def form_errors(request, errors):
     for msg in errors:

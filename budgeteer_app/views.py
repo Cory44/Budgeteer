@@ -6,7 +6,9 @@ from .models import Transaction, TransactionCategory, TransactionType, Account
 from django.forms import modelformset_factory
 from .view_helpers.add_transaction import save_form
 from .view_helpers.general import form_errors, accounting_num
+from .view_helpers.delete_transaction import delete_offset
 from .view_helpers.graphing import graph
+# from django.http import HttpResponse
 
 
 # Create your views here.
@@ -228,12 +230,18 @@ def delete_category(request, pk):
 def delete_transaction(request, account_pk, transaction_pk):
     transaction_account = Account.objects.get(pk=account_pk)
     transaction = Transaction.objects.get(pk=transaction_pk)
-    transaction_account.current_balance -= transaction.amount
-    transaction_account.save()
-    transaction.delete()
+    balance_adjustment = transaction.amount
 
-    # TODO: Need to handle the deletetion of transfer transactions,
-    #  the offseting transaction needs to be deleted
+    if transaction.transaction_type.type_name == "Income" or transaction.category.category[:4] == "From":
+        balance_adjustment = -transaction.amount
+
+    transaction_account.current_balance += balance_adjustment
+    transaction_account.save()
+
+    if transaction.transaction_type.type_name == "Transfer":
+        delete_offset(request, transaction)
+
+    transaction.delete()
 
     messages.success(request, "Transaction Deleted")
     return redirect(f'/{request.user.username}/{transaction_account.account_name}')

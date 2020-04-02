@@ -93,3 +93,6 @@ budgeteer/settings.py
 
 .env
 db.sqlite3
+budgeteer_app/Book1.csv
+budgeteer_app/upload.py
+

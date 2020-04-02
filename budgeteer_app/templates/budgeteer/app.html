@@ -14,19 +14,28 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 </head>
 
-<body class="teal lighten-5 teal-text text-darken-2">
+<body class="teal lighten-5 teal-text text-darken-2" style="display: flex; min-height: 100vh; flex-direction: column;">
 
-    {% include 'budgeteer/includes/nav.html' %}
-     <br>
-    {% include 'budgeteer/includes/messages.html' %}
+    <header>
+        {% include 'budgeteer/includes/nav.html' %}
+        <br>
+        {% include 'budgeteer/includes/messages.html' %}
+    </header>
 
-    <div class="container">
+    <main class="container" style="flex: 1 0 auto;">
 
         {% block content %}
         {% endblock %}
 
-    </div>
+    </main>
+
+    <footer class="teal lighten-3 page-footer" style="padding: 0; margin-top: 100px;">
+        {% include 'budgeteer/includes/footer.html' %}
+    </footer>
 
 </body>
