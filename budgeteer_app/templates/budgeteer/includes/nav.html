@@ -34,9 +34,13 @@
     </div>
 </nav>
 
-<ul class="sidenav" id="mobile-demo">
-    <li><a href="#">Edit Profile</a></li>
-    <li><a href="{% url 'budgeteer:logout' %}">Logout</a></li>
+<ul class="sidenav teal lighten-5" id="mobile-demo">
+    <li><a href="/" class="teal-text">Dashboard</a></li>
+    <li><a href="#" class="teal-text">Edit Profile</a></li>
+    <li><a href="categories" class="teal-text">Edit Transaction Categories</a></li>
+    <li><a href="add_account" class="teal-text">Add an Account</a></li>
+    <li class="divider"></li>
+    <li><a href="{% url 'budgeteer:logout' %}" class="teal-text">Logout</a></li>
 </ul>
 
 <script>

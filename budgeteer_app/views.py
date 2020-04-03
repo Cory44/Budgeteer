@@ -125,6 +125,7 @@ def add_transaction(request, username, account_name):
             if formset.is_valid():
                 return save_form(request, formset, account_name)
             else:
+                print(formset.errors, formset.non_form_errors())
                 for msg in formset.errors:
                     for item in msg:
                         messages.error(request, f"{msg[item][0]}")
@@ -143,6 +144,7 @@ def add_transaction(request, username, account_name):
 
             for form in formset:
                 form.fields['date'].widget.attrs['class'] = 'datepicker'
+                # form.fields['date'].widget.input_formats = ['dd-mm-yyyy',]
                 form.fields['category'].queryset = TransactionCategory.objects.filter(user=request.user)
 
         return render(request, 'budgeteer/profile/add_transaction.html', {"formset": formset})

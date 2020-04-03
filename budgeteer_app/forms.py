@@ -3,6 +3,7 @@ from django.forms import ModelForm, Select, DateField
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from .models import User, Account, Transaction, TransactionCategory
 from django import forms
+from budgeteer.settings import DATE_INPUT_FORMATS
 
 
 # Form to log a user into thier acount
@@ -32,14 +33,14 @@ class AddAccountForm(ModelForm):
         }
 
 class AddTransactionForm(ModelForm):
+    date = forms.DateField(input_formats=DATE_INPUT_FORMATS,)
     class Meta:
         model = Transaction
         fields = ('date', 'amount', 'transaction_type', 'category', 'notes')
         widgets = {'transaction_type': Select(attrs={'style': 'display: block;'}),
                    'category': Select(attrs={'style': 'display: block;'}),
-        }
-
-        # date = forms.DateField(widget=forms.DateInput(format='%d %B, %Y'), input_formats=['%d %B, %Y',],)
+                   # 'date': DateField(input_formats=)
+                   }
 
 
 class AddExpenseCategory(ModelForm):
