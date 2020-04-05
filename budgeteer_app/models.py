@@ -18,6 +18,7 @@ class User(AbstractUser):
         if created:
             self.display_name = self.username
             self.username = self.username.lower()
+
         super(self.__class__, self).save(*args, **kwargs)
 
         if created:

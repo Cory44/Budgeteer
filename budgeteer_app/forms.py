@@ -42,6 +42,11 @@ class AddTransactionForm(ModelForm):
                    # 'date': DateField(input_formats=)
                    }
 
+    def __init__(self , *args , **kwargs):
+        super().__init__(*args , **kwargs)
+        # self.fields['category'].queryset = TransactionCategory.objects.none()
+        # self.auto_id = True
+
 
 class AddExpenseCategory(ModelForm):
     class Meta:

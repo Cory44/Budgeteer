@@ -4,14 +4,14 @@ from django.contrib.auth import logout as lout, login as lin, authenticate
 from django.contrib import messages
 from .models import Transaction, TransactionCategory, TransactionType, Account
 from django.forms import modelformset_factory
-from .view_helpers.add_transaction import save_form
+from .view_helpers.add_transaction import save_form, get_categories, custom_is_valid
 from .view_helpers.general import form_errors, accounting_num
 from .view_helpers.delete_transaction import delete_offset
 from .view_helpers.graphing import graph
+from .view_helpers.categories import create_category
 # from django.http import HttpResponse
 
 
-# Create your views here.
 def home(request):
     if request.user.is_authenticated:
         return redirect(f'/{request.user.username}')
@@ -118,14 +118,25 @@ def add_account(request, username):
 def add_transaction(request, username, account_name):
     if request.user.is_authenticated and request.user.username == username:
         transaction_formset = modelformset_factory(Transaction, form=AddTransactionForm)
+        expense_categories, income_categories, transfer_categories = get_categories(request)
 
         if request.method == 'POST':
             formset = transaction_formset(request.POST)
+            formset.clean()
+
+            for i in range(len(formset)):
+                key = 'form-' + str(i) + '-category'
+
+                category_pk = request.POST.get(key, '')
+
+                if formset[i].clean() != {}:
+                    category = TransactionCategory.objects.get(pk=int(category_pk))
+                    formset[i].clean()['category'] = category
 
             if formset.is_valid():
                 return save_form(request, formset, account_name)
             else:
-                print(formset.errors, formset.non_form_errors())
+                # print(formset.errors, formset.non_form_errors())
                 for msg in formset.errors:
                     for item in msg:
                         messages.error(request, f"{msg[item][0]}")
@@ -133,7 +144,12 @@ def add_transaction(request, username, account_name):
                 for msg in formset.non_form_errors():
                     messages.error(request, f"{msg}")
 
-                return render(request, 'budgeteer/profile/add_transaction.html', {"formset": formset})
+                return render(request,
+                              'budgeteer/profile/add_transaction.html',
+                              {"formset": formset,
+                               "expense_categories": expense_categories,
+                               "income_categories": income_categories,
+                               "transfer_categories": transfer_categories})
         else:
             data = {
                 'form-TOTAL_FORMS': '10',
@@ -145,9 +161,12 @@ def add_transaction(request, username, account_name):
             for form in formset:
                 form.fields['date'].widget.attrs['class'] = 'datepicker'
                 # form.fields['date'].widget.input_formats = ['dd-mm-yyyy',]
-                form.fields['category'].queryset = TransactionCategory.objects.filter(user=request.user)
+                # form.fields['category'].queryset = TransactionCategory.objects.filter(user=request.user)
 
-        return render(request, 'budgeteer/profile/add_transaction.html', {"formset": formset})
+        return render(request, 'budgeteer/profile/add_transaction.html', {"formset": formset,
+                                                                          "expense_categories": expense_categories,
+                                                                          "income_categories": income_categories,
+                                                                          "transfer_categories": transfer_categories})
 
     else:
         return redirect('budgeteer:home')
@@ -176,47 +195,14 @@ def categories(request, username):
         expense_category_form = AddExpenseCategory(prefix="expense_category")
         income_category_form = AddExpenseCategory(prefix="income_category")
 
-        if request.method == 'POST' and 'expense_category' in request.POST:
-            expense_category_form_complete = AddExpenseCategory(request.POST, prefix="expense_category")
+        context = {"expense_categories": expense_categories, "income_categories": income_categories,
+                   "transfer_categories": transfer_categories, "expense_form": expense_category_form,
+                   "income_form": income_category_form}
 
-            if expense_category_form_complete.is_valid():
-                expense = expense_category_form_complete.save(commit=False)
-                expense.transaction_type = TransactionType.objects.get(type_name="Expense")
-                expense.user = user
-                expense.save()
+        if request.method == 'POST':
+            return create_category(request, context)
 
-                messages.success(request, "Category Created")
-                return render(request, 'budgeteer/profile/categories.html', {"expense_categories": expense_categories,
-                                                                             "income_categories": income_categories,
-                                                                             "transfer_categories": transfer_categories,
-                                                                             "expense_form": expense_category_form,
-                                                                             "income_form": income_category_form})
-            else:
-                form_errors(request, expense.errors)
-
-        elif request.method == 'POST' and 'income_category' in request.POST:
-            income_category_form_complete = AddExpenseCategory(request.POST, prefix="income_category")
-
-            if income_category_form_complete.is_valid():
-                income = income_category_form_complete.save(commit=False)
-                income.transaction_type = TransactionType.objects.get(type_name="Income")
-                income.user = user
-                income.save()
-
-                messages.success(request, "Category Created")
-                return render(request, 'budgeteer/profile/categories.html', {"expense_categories": expense_categories,
-                                                                             "income_categories": income_categories,
-                                                                             "transfer_categories": transfer_categories,
-                                                                             "expense_form": expense_category_form,
-                                                                             "income_form": income_category_form})
-            else:
-                form_errors(request, expense.errors)
-
-        return render(request, 'budgeteer/profile/categories.html', {"expense_categories": expense_categories,
-                                                                     "income_categories": income_categories,
-                                                                     "transfer_categories": transfer_categories,
-                                                                     "expense_form": expense_category_form,
-                                                                     "income_form": income_category_form, })
+        return render(request, 'budgeteer/profile/categories.html', context=context)
     else:
         return redirect('budgeteer:home')
 

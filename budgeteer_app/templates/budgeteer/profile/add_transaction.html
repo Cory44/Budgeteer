@@ -35,14 +35,79 @@
 {#                    <td hidden="True">{{ form.account }}</td>#}
                     <td width="10%">{{ form.date }}</td>
                     <td width="10%">{{ form.amount }}</td>
-                    <td width="15%">{{ form.transaction_type }}</td>
-                    <td width="15%">{{ form.category }}</td>
+                    <td width="15%" onchange="type_update.call(this)">{{ form.transaction_type }}</td>
+                    <td width="15%" onchange="selected.call(this)">{{ form.category }}</td>
                     <td width="35%">{{ form.notes }}</td>
                 </tr>
             {% endfor %}
         </table>
         <button class="btn waves-effect teal lighten-2" type="submit">Add Transactions</button>
 
-
     </form>
+
+    <script>
+
+        function selected() {
+            var selected = $(this).children().valueOf();
+            console.log(selected);
+        }
+
+        function category_update(type, categories) {
+            if (type === "Expense") {
+                categories.append('<option>---------</option>');
+                {% for category in expense_categories %}
+                    categories.append('<option value="{{ category.pk }}">{{ category.category }}</option>');
+                {% endfor %}
+            } else if (type === "Income") {
+                categories.append('<option>---------</option>');
+                {% for category in income_categories %}
+                    categories.append('<option value="{{ category.pk }}">{{ category.category }}</option>');
+                {% endfor %}
+            } else if (type === "Transfer") {
+                categories.append('<option>---------</option>');
+                {% for category in transfer_categories %}
+                    categories.append('<option value="{{ category.pk }}">{{ category.category }}</option>');
+                {% endfor %}
+            } else {
+                categories.append('<option>---------</option>');
+            }
+        }
+
+        function categories() {
+            for(i = 0; i < 10; i++) {
+
+                var id = "#id_form-" + i + "-transaction_type";
+                var other = "#id_form-" + i + "-category";
+
+                var type = $(`${id} option:checked`)[0].text;
+
+                var categories = $(`${other}`);
+                categories.empty();
+
+                category_update(type, categories);
+            }
+        }
+
+        function type_update() {
+
+            var type = this.children[0];
+            type = type.options[type.selectedIndex].text;
+
+            var categories = $(this).next().children();
+            categories.empty();
+
+            category_update(type, categories);
+        }
+
+        $(document).ready(function() {
+            var select = $("select");
+
+            for(i = 1; i < select.length; i = i + 2) {
+                console.log($(select[i]));
+                $(select[i]).empty();
+            }
+        });
+
+    </script>
+
 {% endblock %}
