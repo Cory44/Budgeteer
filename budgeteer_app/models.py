@@ -14,8 +14,9 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
 
-        created = not self.pk
-        if created:
+        created = self.pk
+
+        if not created:
             self.display_name = self.username
             self.username = self.username.lower()
 
@@ -66,13 +67,14 @@ class Account(models.Model):
         super().save()
 
         if created:
+            transaction_type = TransactionType.objects.get(type_name="Transfer")
             TransactionCategory.objects.create(category="From " + self.account_name,
-                                               transaction_type=TransactionType.objects.get(type_name="Transfer"),
+                                               transaction_type=transaction_type,
                                                user=self.user,
                                                account=self)
 
             TransactionCategory.objects.create(category="To " + self.account_name,
-                                               transaction_type=TransactionType.objects.get(type_name="Transfer"),
+                                               transaction_type=transaction_type,
                                                user=self.user,
                                                account=self)
 

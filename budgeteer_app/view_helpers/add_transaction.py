@@ -1,5 +1,6 @@
 from budgeteer_app.models import Account, TransactionCategory, Transaction, TransactionType
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.contrib import messages
 
 
 # Helps create an offsetting transaction for transfer transactions between a users accounts
@@ -30,7 +31,7 @@ def save_form(request, formset, account_name):
 
     for i in range(len(transactions)):  # Add transaction to
         transactions[i].account = account
-        transactions[i].category =  formset[i].clean()['category']
+        transactions[i].category = formset[i].clean()['category']
 
         if transactions[i].transaction_type.type_name == "Transfer":
             transfer(request, transactions[i])
@@ -43,24 +44,46 @@ def save_form(request, formset, account_name):
 def get_categories(request):
     expense = TransactionType.objects.get(type_name="Expense")
     income = TransactionType.objects.get(type_name="Income")
-    transfer = TransactionType.objects.get(type_name="Transfer")
-    # value_adjust = TransactionType.objects.get(type_name="Value Adjustment")
+    transfer_type = TransactionType.objects.get(type_name="Transfer")
+    value_adjust = TransactionType.objects.get(type_name="Value Adjustment")
 
     expense_categories = TransactionCategory.objects.filter(user=request.user, transaction_type=expense)
     income_categories = TransactionCategory.objects.filter(user=request.user, transaction_type=income)
-    transfer_categories = TransactionCategory.objects.filter(user=request.user, transaction_type=transfer)
-    # value_adjust_categories = TransactionCategory.objects.filter(user=request.user, transaction_type=value_adjust)
+    transfer_categories = TransactionCategory.objects.filter(user=request.user, transaction_type=transfer_type)
+    value_adjust_categories = TransactionCategory.objects.filter(user=request.user, transaction_type=value_adjust)
 
-    return expense_categories, income_categories, transfer_categories
-            # "value_adjust": value_adjust_categories,
+    return expense_categories, income_categories, transfer_categories, value_adjust_categories,
 
 
-def custom_is_valid(formset):
+def formset_errors(request, formset, context):
+    for msg in formset.errors:
+        for item in msg:
+            messages.error(request, f"{msg[item][0]}")
 
-    for error in formset.errors:
-        for key in error:
-            if key != 'category' and \
-                    error[key][0] != 'Select a valid choice. That choice is not one of the available choices.':
-                return False
+    for msg in formset.non_form_errors():
+        messages.error(request, f"{msg}")
 
-    return True
+    return render(request, 'budgeteer/profile/add_transaction.html', context)
+
+
+def validate_transaction_formset(request, formset, account_name, context):
+    if formset.is_valid():
+        return save_form(request, formset, account_name)
+    else:
+        return formset_errors(request, formset, context)
+
+
+def clean_formset(request, formset):
+    cleaned_formset = formset
+    cleaned_formset.clean()
+
+    for i in range(len(cleaned_formset)):
+        key = 'form-' + str(i) + '-category'
+
+        category_pk = request.POST.get(key, '')
+
+        if cleaned_formset[i].clean() != {}:
+            category = TransactionCategory.objects.get(pk=int(category_pk))
+            cleaned_formset[i].clean()['category'] = category
+
+    return cleaned_formset
