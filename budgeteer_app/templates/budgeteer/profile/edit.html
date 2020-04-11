@@ -1,0 +1,21 @@
+{% extends 'budgeteer/app.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12 m4 offset-m4">
+            <div class="card teal lighten-3">
+                <div class="card-content">
+                    <span class="card-title"><strong>Edit User Details</strong></span>
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            {{ field.label }}{{ field }}
+                        {% endfor %}
+                        <button class="btn waves-effect teal lighten-2" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

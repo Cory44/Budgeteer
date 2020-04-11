@@ -44,3 +44,11 @@ class AddExpenseCategory(ModelForm):
         model = TransactionCategory
         fields = ('category',)
 
+
+class EditUser(forms.Form):
+    username = forms.CharField(max_length=100)
+    display_name = forms.CharField(max_length=100)
+
+    # class Meta:
+    #     model = User
+    #     fields = ('username', 'display_name')

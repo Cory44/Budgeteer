@@ -12,6 +12,7 @@ from .view_helpers.categories import create_category
 from .view_helpers.add_account import validate_account_form
 from .view_helpers.register import validate_registration
 from .view_helpers.login import validate_login
+from .view_helpers.edit import update_user
 
 
 def home(request):
@@ -183,3 +184,11 @@ def delete_transaction(request, account_pk, transaction_pk):
 
 def graph_view(request):
     return graph(request)
+
+
+def edit(request, username):
+    if request.user.is_authenticated and request.user.username == username:
+        return update_user(request)
+    else:
+        return redirect('budgeteer:home')
+
