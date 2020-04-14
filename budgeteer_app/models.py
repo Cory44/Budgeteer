@@ -14,17 +14,17 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
 
-        created = self.pk
+        new_user = not self.pk
 
-        if not created:
+        if not self.pk:
             self.display_name = self.username
             self.username = self.username.lower()
 
         super(self.__class__, self).save(*args, **kwargs)
 
-        if created:
-            income = TransactionType.objects.get(type_name='Income')
+        if new_user:
             expense = TransactionType.objects.get(type_name='Expense')
+            income = TransactionType.objects.get(type_name='Income')
 
             TransactionCategory.objects.create(user=self, transaction_type=expense, category="Groceries")
             TransactionCategory.objects.create(user=self, transaction_type=expense, category="Rent/Mortgage")
