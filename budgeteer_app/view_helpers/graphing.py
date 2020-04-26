@@ -45,8 +45,12 @@ def graph(request):
             elif transaction.transaction_type.type_name == "Income":
                 daily_transaction_total += transaction.amount
 
+            elif transaction.transaction_type.type_name == "Value Adjustment":
+                daily_transaction_total += transaction.amount
+
         daily_networth[day] = starting_balance + daily_transaction_total
 
+    print(daily_networth[dates[-1]])
     fig = plt.figure(figsize=(14, 7))
     # ax = fig.add_subplot(111)
     ax = plt.gca()
