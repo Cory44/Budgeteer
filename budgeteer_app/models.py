@@ -25,6 +25,7 @@ class User(AbstractUser):
         if new_user:
             expense = TransactionType.objects.get(type_name='Expense')
             income = TransactionType.objects.get(type_name='Income')
+            value_adj = TransactionType.objects.get(type_name='Value Adjustment')
 
             TransactionCategory.objects.create(user=self, transaction_type=expense, category="Groceries")
             TransactionCategory.objects.create(user=self, transaction_type=expense, category="Rent/Mortgage")
@@ -33,6 +34,9 @@ class User(AbstractUser):
             TransactionCategory.objects.create(user=self, transaction_type=expense, category="House Bills")
             TransactionCategory.objects.create(user=self, transaction_type=expense, category="Gifts")
             TransactionCategory.objects.create(user=self, transaction_type=income, category="Pay")
+            TransactionCategory.objects.create(user=self, transaction_type=value_adj, category="Increase")
+            TransactionCategory.objects.create(user=self, transaction_type=value_adj, category="Decrease")
+
 
 
 # AccountType class only includes one field. The account_type objects include types like chequing, savings, credit card,
@@ -127,8 +131,11 @@ class Transaction(models.Model):
     def save(self, *args, **kwargs):
         amount = self.amount
 
-        if str(self.transaction_type) == "Expense" or (str(self.transaction_type) == "Transfer"
-                                                       and self.category.category[:2] == "To"):
+        expense = self.transaction_type.type_name == "Expense"
+        transfer_to = self.transaction_type.type_name == "Transfer" and self.category.category[:2] == "To"
+        value_decrease = self.transaction_type.type_name == "Value Adjustment" and self.category.category == "Decrease"
+
+        if  expense or transfer_to or value_decrease:
             amount = -amount
 
         self.account.transaction(amount)
