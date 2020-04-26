@@ -162,6 +162,24 @@ def delete_category(request, pk):
     return redirect(f'/{request.user.username}/categories')
 
 
+def archive_category(request, pk):
+    category = TransactionCategory.objects.get(pk=pk)
+    print(category.archived)
+
+    if category.archived:
+        category.archived = False
+        messages.success(request, "Category Archived")
+    else:
+        category.archived = True
+        messages.success(request, "Category Unarchived")
+
+    category.save()
+
+    print(category.archived)
+
+    return redirect(f'/{request.user.username}/categories')
+
+
 def delete_transaction(request, account_pk, transaction_pk):
     transaction_account = Account.objects.get(pk=account_pk)
     transaction = Transaction.objects.get(pk=transaction_pk)
@@ -191,4 +209,3 @@ def edit(request, username):
         return update_user(request)
     else:
         return redirect('budgeteer:home')
-

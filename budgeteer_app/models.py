@@ -101,6 +101,7 @@ class TransactionCategory(models.Model):
     category = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, blank=True)
+    archived = models.BooleanField(null=False, default=False)
 
     def __str__(self):
         return self.category

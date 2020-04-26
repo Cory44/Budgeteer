@@ -50,11 +50,7 @@ def graph(request):
 
         daily_networth[day] = starting_balance + daily_transaction_total
 
-    print(daily_networth[dates[-1]])
     fig = plt.figure(figsize=(14, 7))
-    # ax = fig.add_subplot(111)
-    ax = plt.gca()
-
 
     buf = io.BytesIO()
 
