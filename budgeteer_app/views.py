@@ -164,7 +164,6 @@ def delete_category(request, pk):
 
 def archive_category(request, pk):
     category = TransactionCategory.objects.get(pk=pk)
-    print(category.archived)
 
     if category.archived:
         category.archived = False
@@ -174,8 +173,6 @@ def archive_category(request, pk):
         messages.success(request, "Category Unarchived")
 
     category.save()
-
-    print(category.archived)
 
     return redirect(f'/{request.user.username}/categories')
 
@@ -207,5 +204,16 @@ def graph_view(request):
 def edit(request, username):
     if request.user.is_authenticated and request.user.username == username:
         return update_user(request)
+    else:
+        return redirect('budgeteer:home')
+
+def budget(request, username):
+    categories = TransactionCategory.objects.filter(user=request.user,
+                                                    transaction_type__type_name="Expense",
+                                                    archived=False).order_by('category')
+    context = {"categories": categories}
+
+    if request.user.is_authenticated and request.user.username == username:
+        return render(request, 'budgeteer/profile/budget/budget.html', context=context)
     else:
         return redirect('budgeteer:home')
