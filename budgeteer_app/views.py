@@ -13,6 +13,7 @@ from .view_helpers.add_account import validate_account_form
 from .view_helpers.register import validate_registration
 from .view_helpers.login import validate_login
 from .view_helpers.edit import update_user
+from django.db.models import Sum
 
 
 def home(request):
@@ -208,10 +209,28 @@ def edit(request, username):
         return redirect('budgeteer:home')
 
 def budget(request, username):
+
     categories = TransactionCategory.objects.filter(user=request.user,
                                                     transaction_type__type_name="Expense",
                                                     archived=False).order_by('category')
-    context = {"categories": categories}
+
+    category_actual = {}
+
+
+    for category in categories:
+        actual = Transaction.objects.filter(account__user=request.user, date__month=3, date__year=2020, category=category).aggregate(total_amount=Sum('amount'))
+
+        if actual['total_amount'] == None:
+            actual_amount = 0
+        else:
+            actual_amount = round(actual['total_amount'], 2)
+
+        category_amount = {"category": category, "actual_amount": actual_amount}
+        category_actual[category.category] = category_amount
+
+    print(category_actual)
+    context = {"categories": category_actual}
+
 
     if request.user.is_authenticated and request.user.username == username:
         return render(request, 'budgeteer/profile/budget/budget.html', context=context)

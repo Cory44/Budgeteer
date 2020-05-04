@@ -95,4 +95,5 @@ budgeteer/settings.py
 db.sqlite3
 budgeteer_app/Book1.csv
 budgeteer_app/upload.py
+budgeteer_app/AllAccounts.csv
 
