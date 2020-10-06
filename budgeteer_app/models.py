@@ -38,7 +38,6 @@ class User(AbstractUser):
             TransactionCategory.objects.create(user=self, transaction_type=value_adj, category="Decrease")
 
 
-
 # AccountType class only includes one field. The account_type objects include types like chequing, savings, credit card,
 # investment, TFSA, RRSP, etc. These account types will be a global list of types, set by an administrator (i.e. a user
 # will not be able to set their own account types)
@@ -135,7 +134,7 @@ class Transaction(models.Model):
         transfer_to = self.transaction_type.type_name == "Transfer" and self.category.category[:2] == "To"
         value_decrease = self.transaction_type.type_name == "Value Adjustment" and self.category.category == "Decrease"
 
-        if  expense or transfer_to or value_decrease:
+        if expense or transfer_to or value_decrease:
             amount = -amount
 
         self.account.transaction(amount)

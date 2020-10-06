@@ -207,11 +207,12 @@ def edit(request, username):
     else:
         return redirect('budgeteer:home')
 
+
 def budget(request, username):
-    categories = TransactionCategory.objects.filter(user=request.user,
-                                                    transaction_type__type_name="Expense",
-                                                    archived=False).order_by('category')
-    context = {"categories": categories}
+    category_names = TransactionCategory.objects.filter(user=request.user,
+                                                        transaction_type__type_name="Expense",
+                                                        archived=False).order_by('category')
+    context = {"categories": category_names}
 
     if request.user.is_authenticated and request.user.username == username:
         return render(request, 'budgeteer/profile/budget/budget.html', context=context)

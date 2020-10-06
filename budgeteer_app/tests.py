@@ -105,7 +105,6 @@ class TransactionTest(TestCase):
         # Offsetting transaction happens in the view, so the From account will not have its balance updated
         self.assertEqual(savings.current_balance, savings.starting_balance)
 
-
     def test_transfer_to_transaction(self):
         chequing = Account.objects.get(pk=1)
         savings = Account.objects.get(pk=2)
@@ -138,4 +137,3 @@ class TransactionTest(TestCase):
                                    transaction_type=value_adj, category=decrease)
 
         self.assertEqual(chequing.current_balance, Decimal('20.00'))
-
