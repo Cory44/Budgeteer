@@ -1,0 +1,25 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background-color: rgb(245, 245, 235);
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+.category {
+    margin-top: 15px;
+}
+
+.category-btn {
+    margin: 10px 0 10px 0;
+}
+
+#add-transaction {
+    font-size: 80% !important;
+}
+#nav-dislay-name {
+    min-width: 150px;
+}

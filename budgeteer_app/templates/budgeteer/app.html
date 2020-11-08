@@ -20,10 +20,13 @@
     <!-- Google icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'budgeteer_app/style.css' %}">
+
 
 </head>
 
-<body class="teal-text text-darken-2" style="display: flex; min-height: 100vh; flex-direction: column; background-color: rgb(245, 245, 210);">
+<body class="teal-text text-lighten-2">
 
     <header>
         {% include 'budgeteer/includes/nav.html' %}
@@ -31,14 +34,14 @@
         {% include 'budgeteer/includes/messages.html' %}
     </header>
 
-    <main class="container" style="flex: 1 0 auto;">
+    <main class="container">
 
         {% block content %}
         {% endblock %}
 
     </main>
 
-    <footer class="teal lighten-3 page-footer" style="padding: 0; margin-top: 100px;">
+    <footer class="teal lighten-4 page-footer">
         {% include 'budgeteer/includes/footer.html' %}
     </footer>
 

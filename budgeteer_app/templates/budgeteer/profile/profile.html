@@ -8,7 +8,7 @@
 
         <!-- Net Worth -->
         <div class="col s12 m4">
-            <div class="card teal lighten-3">
+            <div class="card teal lighten-4 teal-text text-lighten-1">
                 <div class="card-content">
                     <span class="card-title"><strong>Net Worth</strong></span>
                     <h3 class="center-align">${{ netWorth }}</h3>
@@ -18,7 +18,7 @@
 
         <!-- Accounts Card -->
         <div class="col s12 m4">
-            <div class="card teal lighten-3">
+            <div class="card teal lighten-4 teal-text text-lighten-1">
                 <div class="card-content">
                     <span class="card-title"><strong>Accounts</strong></span>
                     <div class="row">
@@ -44,7 +44,7 @@
 
         <!-- Transaction Categories -->
         <div class="col s12 m4">
-            <div class="card teal lighten-3">
+            <div class="card teal lighten-4 teal-text text-lighten-1">
                 <div class="card-content">
                     <span class="card-title">
                         <a href="/{{ request.user.username }}/budget" class="teal-text text-darken-1">
@@ -56,7 +56,7 @@
         </div>
 
         <div class="col s12">
-            <div class="card teal lighten-3">
+            <div class="card teal lighten-4 teal-text text-lighten-1">
                 <div class="card-content">
                     {% if accounts %}
                         <img src="{% url 'budgeteer:graph_view' %}" alt="graph" style="width: 100%;" />

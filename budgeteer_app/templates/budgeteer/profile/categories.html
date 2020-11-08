@@ -8,16 +8,15 @@
         </div>
 
         <div class="col s12 m6">
-            <div class="card teal lighten-3">
+            <div class="card teal lighten-4 teal-text text-lighten-1">
                 <div class="card-content">
                     <span class="card-title"><strong>Expense Categories</strong></span>
                     <div class="row">
                         {% for category in expense_categories %}
-                            <p class="col m5 s4" style="margin-top: 15px;">{{ category.category }}</p>
+                            <p class="col m5 s4 category">{{ category.category }}</p>
 
                             <a href="/category/archive/{{ category.pk }}" class="col m3 s4">
-                                <button class="btn waves-effect teal lighten-2"
-                                        style="margin: 10px 0px 10px 0px;">
+                                <button class="btn waves-effect teal lighten-2 category-btn">
                                     {% if category.archived %}
                                         Unarchive
                                     {% else %}
@@ -27,8 +26,7 @@
                             </a>
 
                             <a href="/category/delete/{{ category.pk }}" class="col m3 s4 offset-m1">
-                                <button class="btn waves-effect teal lighten-2"
-                                        style="margin: 10px 0px 10px 0px;">Delete</button>
+                                <button class="btn waves-effect teal lighten-2 category-btn" >Delete</button>
                             </a>
 
                         {% endfor %}
@@ -43,16 +41,15 @@
         </div>
 
         <div class="col s12 m6">
-            <div class="card teal lighten-3">
+            <div class="card teal lighten-4 teal-text text-lighten-1">
                 <div class="card-content">
                     <span class="card-title"><strong>Income Categories</strong></span>
                     <div class="row">
                         {% for category in income_categories %}
-                            <p class="col m5 s4" style="margin-top: 15px;">{{ category.category }}</p>
+                            <p class="col m5 s4 category">{{ category.category }}</p>
 
                             <a href="/category/archive/{{ category.pk }}" class="col m3 s4">
-                                <button class="btn waves-effect teal lighten-2"
-                                        style="margin: 10px 0px 10px 0px;">
+                                <button class="btn waves-effect teal lighten-2 category-btn">
                                     {% if category.archived %}
                                         Unarchive
                                     {% else %}
@@ -62,8 +59,7 @@
                             </a>
 
                             <a href="/category/delete/{{ category.pk }}" class="col m3 s4 offset-m1">
-                                <button class="btn waves-effect teal lighten-2"
-                                        style="margin: 10px 0px 10px 0px;">Delete</button>
+                                <button class="btn waves-effect teal lighten-2 category-btn">Delete</button>
                             </a>
 
                         {% endfor %}
@@ -79,7 +75,7 @@
         </div>
 
 {#        <div class="col s12 m4">#}
-{#            <div class="card teal lighten-3">#}
+{#            <div class="card teal lighten-4 teal-text text-lighten-1">#}
 {#                <div class="card-content">#}
 {#                    <span class="card-title"><strong>Transfer Categories</strong></span>#}
 {#                    <P>Transfer categories are not editable, they are generated based on the accounts you have</P>#}

@@ -1,5 +1,5 @@
 <!-- Dropdown Structure -->
-<ul id="dropdown1" class="dropdown-content">
+<ul id="dropdown1" class="dropdown-content teal lighten-5">
     <li><a href="/">Dashboard</a></li>
     <li><a href="edit">Edit Profile</a></li>
     <li><a href="categories">Edit Transaction Categories</a></li>
@@ -9,38 +9,46 @@
 </ul>
 
 
-<nav>
-    <div class="nav-wrapper teal lighten-3">
+<nav class="teal lighten-4">
+    <div class="nav-wrapper">
         <div class="container">
             {% if request.user.is_authenticated %}
-                <a href="/{{ request.user.username }}" class="brand-logo">Budgeteer</a>
-                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <a href="/{{ request.user.username }}" class="brand-logo teal-text text-lighten-1">Budgeteer</a>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger teal-text text-lighten-1"><i class="material-icons">menu</i></a>
             {% else %}
-                <a href="{%  url 'budgeteer:home' %}" class="brand-logo">Budgeteer</a>
+                <a href="{%  url 'budgeteer:home' %}" class="brand-logo teal-text text-lighten-1">Budgeteer</a>
             {% endif %}
             <ul id="nav-mobile" class="right hide-on-med-and-down">
                 {% if request.user.is_authenticated %}
-                    <li style="min-width: 150px;">
-                        <a class="dropdown-trigger" href="" data-target="dropdown1">
+                    <li id="nav-dislay-name" class="teal-text text-lighten-1">
+                        <a class="dropdown-trigger teal-text text-lighten-1" href="" data-target="dropdown1">
                             {{ request.user.display_name }}
                         </a>
                     </li>
                 {% else %}
-                    <li><a href="{% url 'budgeteer:login' %}">Login</a></li>
-                    <li><a href="{% url 'budgeteer:register' %}">Register</a></li>
+                    <li>
+                        <a href="{% url 'budgeteer:login' %}" class="teal-text text-lighten-1">
+                            Login
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'budgeteer:register' %}" class="teal-text text-lighten-1">
+                            Register
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
 
-<ul class="sidenav teal lighten-5" id="mobile-demo">
-    <li><a href="/" class="teal-text">Dashboard</a></li>
-    <li><a href="edit" class="teal-text">Edit Profile</a></li>
-    <li><a href="categories" class="teal-text">Edit Transaction Categories</a></li>
-    <li><a href="add_account" class="teal-text">Add an Account</a></li>
+<ul class="sidenav teal lighten-4" id="mobile-demo">
+    <li><a href="/" class="teal-text text-lighten-1">Dashboard</a></li>
+    <li><a href="edit" class="teal-text text-lighten-1">Edit Profile</a></li>
+    <li><a href="categories" class="teal-text text-lighten-1">Edit Transaction Categories</a></li>
+    <li><a href="add_account" class="teal-text text-lighten-1">Add an Account</a></li>
     <li class="divider"></li>
-    <li><a href="{% url 'budgeteer:logout' %}" class="teal-text">Logout</a></li>
+    <li><a href="{% url 'budgeteer:logout' %}" class="teal-text text-lighten-1">Logout</a></li>
 </ul>
 
 <script>
