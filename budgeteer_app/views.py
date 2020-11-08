@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserAuthForm, CustomUserCreationForm, AddAccountForm, AddTransactionForm, AddExpenseCategory
 from django.contrib.auth import logout as lout
 from django.contrib import messages
-from .models import Transaction, TransactionCategory, TransactionType, Account
+from .models import Transaction, TransactionCategory, TransactionType, Account, Budget
 from django.forms import modelformset_factory
 from .view_helpers.add_transaction import get_categories, validate_transaction_formset, clean_formset
 from .view_helpers.general import accounting_num
@@ -209,10 +209,8 @@ def edit(request, username):
 
 
 def budget(request, username):
-    category_names = TransactionCategory.objects.filter(user=request.user,
-                                                        transaction_type__type_name="Expense",
-                                                        archived=False).order_by('category')
-    context = {"categories": category_names}
+    budget_objects = Budget.objects.filter(transaction_category__user=request.user).order_by('transaction_category')
+    context = {"budgets": budget_objects}
 
     if request.user.is_authenticated and request.user.username == username:
         return render(request, 'budgeteer/profile/budget/budget.html', context=context)

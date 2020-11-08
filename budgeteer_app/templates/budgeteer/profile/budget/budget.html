@@ -5,10 +5,14 @@
         <div class="col s12 center-align">
             <h5>Budget</h5>
         </div>
-        <div class="col s12 m8 offset-m2"
-            {% for category in categories %}
-                <p>{{ category }}</p>
-            {% endfor %}
+        <div class="col s12 m8 offset-m2">
+            <div class="row">
+                {% for budget in budgets %}
+                    <div class="col s4">{{ budget.transaction_category }}</div>
+                    <div class="col s4">{{ budget.amount }}</div>
+                    <div class="col s4">{{ budget.period}}</div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
