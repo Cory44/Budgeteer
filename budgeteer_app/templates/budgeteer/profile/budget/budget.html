@@ -8,9 +8,11 @@
         <div class="col s12 m8 offset-m2">
             <div class="row">
                 {% for budget in budgets %}
-                    <div class="col s4">{{ budget.transaction_category }}</div>
-                    <div class="col s4">{{ budget.amount }}</div>
-                    <div class="col s4">{{ budget.period}}</div>
+                    <div class="col s3">{{ budget.transaction_category }}</div>
+                    <div class="col s3">{{ budget.period}}</div>
+                    <div class="col s3">{{ budget.amount }}</div>
+                    <div class="col s3">{{ actuals|get_item:budget.transaction_category.category }}</div>
+
                 {% endfor %}
             </div>
         </div>
