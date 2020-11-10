@@ -19,7 +19,7 @@ urlpatterns = [
     path('<username>/edit', views.edit, name="edit"),
     path('<username>/add_account', views.add_account, name="add_account"),
     path('<username>/categories', views.categories, name="categories"),
-    path('<username>/budget', views.budget, name="budget"),
+    path('<username>/budget/<year>/<month>', views.budget, name="budget"),
     path('<username>/<account_name>', views.account, name="account"),
     path('<username>/<account_name>/add_transaction', views.add_transaction, name="add_transaction"),
 ]

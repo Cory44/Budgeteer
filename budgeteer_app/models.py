@@ -148,6 +148,7 @@ class Transaction(models.Model):
         super().save(*args, **kwargs)
 
 
+# Budget model has a period column, however there is no support for this yet
 class Budget(models.Model):
     PERIOD = (
         ('daily' , 'Daily') ,

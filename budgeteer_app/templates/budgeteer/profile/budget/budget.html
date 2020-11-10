@@ -2,19 +2,29 @@
 
 {% block content %}
     <div class="row">
+
         <div class="col s12 center-align">
             <h5>Budget</h5>
         </div>
-        <div class="col s12 m8 offset-m2">
-            <div class="row">
-                {% for budget in budgets %}
-                    <div class="col s3">{{ budget.transaction_category }}</div>
-                    <div class="col s3">{{ budget.period}}</div>
-                    <div class="col s3">{{ budget.amount }}</div>
-                    <div class="col s3">{{ actuals|get_item:budget.transaction_category.category }}</div>
-
-                {% endfor %}
+        <div>
+            <div class="col s4 left-align">
+                <a href="/{{ request.user.username }}/budget/{{ dates.previous_year }}/{{ dates.previous_month_num }}" class="teal-text text-darken-1">
+                    <-- {{ dates.previous_month_name }} {{ dates.previous_year }}
+                </a>
             </div>
+            <div class="col s4 center-align">{{ dates.current_month }} {{ dates.current_year }}</div>
+            <div class="col s4 right-align">
+                <a href="/{{ request.user.username }}/budget/{{ dates.next_year }}/{{ dates.next_month_num }}" class="teal-text text-darken-1">
+                    {{ dates.next_month_name }} {{ dates.next_year }} -->
+                </a>
+            </div>
+        </div>
+        {% for budget in budgets %}
+            <div class="col s3">{{ budget.transaction_category }}</div>
+            <div class="col s3">{{ budget.period}}</div>
+            <div class="col s3">{{ budget.amount }}</div>
+            <div class="col s3">{{ actuals|get_item:budget.transaction_category.category }}</div>
+        {% endfor %}
         </div>
     </div>
 

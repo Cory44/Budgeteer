@@ -14,6 +14,7 @@ from .view_helpers.register import validate_registration
 from .view_helpers.login import validate_login
 from .view_helpers.edit import update_user
 from django.db.models import Sum
+import datetime
 
 
 def home(request):
@@ -70,8 +71,13 @@ def profile(request, username):
                                   "balance": accounting_num(each_account.current_balance),
                                   "account": each_account})
 
+        month = int(datetime.datetime.now().strftime("%m"))
+        year = int(datetime.datetime.now().strftime("%Y"))
+
         return render(request, "budgeteer/profile/profile.html", {"accounts": user_accounts,
-                                                                  "netWorth": accounting_num(net_worth), })
+                                                                  "netWorth": accounting_num(net_worth),
+                                                                  "month": month,
+                                                                  "year": year})
     else:
         return redirect('budgeteer:home')
 
@@ -209,17 +215,32 @@ def edit(request, username):
         return redirect('budgeteer:home')
 
 
-def budget(request, username):
+def budget(request, username, month, year):
     budget_objects = Budget.objects.filter(transaction_category__user=request.user).order_by('transaction_category')
     actual_amounts = dict()
     for budget in budget_objects:
         sum = Transaction.objects.filter(account__user=request.user,
                                          category__category=budget.transaction_category.category,
-                                         date__month=5, date__year=2020).aggregate(Sum('amount'))
+                                         date__month=int(month), date__year=int(year)).aggregate(Sum('amount'))
 
         actual_amounts[budget.transaction_category.category] = round(sum['amount__sum'], 2) if sum['amount__sum'] else 0
 
-    context = {"budgets": budget_objects, "actuals": actual_amounts}
+    current_month = datetime.datetime(int(year), int(month), 1).strftime("%B")
+    current_year = datetime.datetime(int(year), int(month), 1).strftime("%Y")
+    previous_month_name = (datetime.datetime(int(year) - 1, 12, 1) if month == "01" else datetime.datetime(int(year), int(month) - 1, 1)).strftime("%B")
+    previous_month_num = (datetime.datetime(int(year) - 1, 12, 1) if month == "01" else datetime.datetime(int(year), int(month) - 1, 1)).strftime("%m")
+    previous_year = (datetime.datetime(int(year) - 1, 12, 1) if month == "01" else datetime.datetime(int(year), int(month) - 1, 1)).strftime("%Y")
+    next_month_name = (datetime.datetime(int(year) + 1, 1, 1) if month == "12" else datetime.datetime(int(year), int(month) + 1, 1)).strftime("%B")
+    next_month_num = (datetime.datetime(int(year) + 1 , 1 , 1) if month == "12" else datetime.datetime(int(year), int(month) + 1, 1)).strftime("%m")
+    next_year = (datetime.datetime(int(year) + 1, 1, 1) if month == "12" else datetime.datetime(int(year), int(month) + 1, 1)).strftime("%Y")
+
+    dates = {"current_month": current_month, "current_year": current_year,
+             "previous_month_name": previous_month_name, "previous_year": previous_year,
+             "previous_month_num": previous_month_num,
+             "next_month_name": next_month_name, "next_year": next_year, "next_month_num": next_month_num}
+
+    context = {"budgets": budget_objects, "actuals": actual_amounts, "dates": dates}
+
 
     if request.user.is_authenticated and request.user.username == username:
         return render(request, 'budgeteer/profile/budget/budget.html', context=context)
