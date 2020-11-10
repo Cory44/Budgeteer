@@ -8,14 +8,16 @@
         </div>
         <div>
             <div class="col s4 left-align">
-                <a href="/{{ request.user.username }}/budget/{{ dates.previous_year }}/{{ dates.previous_month_num }}" class="teal-text text-darken-1">
-                    <-- {{ dates.previous_month_name }} {{ dates.previous_year }}
+                <a href="/{{ request.user.username }}/budget/{{ dates.previous_year }}/{{ dates.previous_month_num }}"
+                   class="teal lighten-4 teal-text text-lighten-1 waves-effect waves-light btn">
+                    <p class="valign-wrapper budget-navigation"><i class="material-icons">navigate_before</i> {{ dates.previous_month_name }} {{ dates.previous_year }}</p>
                 </a>
             </div>
-            <div class="col s4 center-align">{{ dates.current_month }} {{ dates.current_year }}</div>
+            <div class="col s4 center-align"><h6>{{ dates.current_month }} {{ dates.current_year }}</h6></div>
             <div class="col s4 right-align">
-                <a href="/{{ request.user.username }}/budget/{{ dates.next_year }}/{{ dates.next_month_num }}" class="teal-text text-darken-1">
-                    {{ dates.next_month_name }} {{ dates.next_year }} -->
+                <a href="/{{ request.user.username }}/budget/{{ dates.next_year }}/{{ dates.next_month_num }}"
+                   class="teal lighten-4 teal-text text-lighten-1 waves-effect waves-light btn">
+                    <p class="valign-wrapper budget-navigation">{{ dates.next_month_name }} {{ dates.next_year }}<i class="material-icons">navigate_next</i></p>
                 </a>
             </div>
         </div>
