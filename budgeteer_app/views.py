@@ -13,6 +13,7 @@ from .view_helpers.add_account import validate_account_form
 from .view_helpers.register import validate_registration
 from .view_helpers.login import validate_login
 from .view_helpers.edit import update_user
+from .view_helpers.budget import getDates
 from django.db.models import Sum
 import datetime
 
@@ -225,19 +226,7 @@ def budget(request, username, month, year):
 
         actual_amounts[budget.transaction_category.category] = round(sum['amount__sum'], 2) if sum['amount__sum'] else 0
 
-    current_month = datetime.datetime(int(year), int(month), 1).strftime("%B")
-    current_year = datetime.datetime(int(year), int(month), 1).strftime("%Y")
-    previous_month_name = (datetime.datetime(int(year) - 1, 12, 1) if month == "01" else datetime.datetime(int(year), int(month) - 1, 1)).strftime("%B")
-    previous_month_num = (datetime.datetime(int(year) - 1, 12, 1) if month == "01" else datetime.datetime(int(year), int(month) - 1, 1)).strftime("%m")
-    previous_year = (datetime.datetime(int(year) - 1, 12, 1) if month == "01" else datetime.datetime(int(year), int(month) - 1, 1)).strftime("%Y")
-    next_month_name = (datetime.datetime(int(year) + 1, 1, 1) if month == "12" else datetime.datetime(int(year), int(month) + 1, 1)).strftime("%B")
-    next_month_num = (datetime.datetime(int(year) + 1 , 1 , 1) if month == "12" else datetime.datetime(int(year), int(month) + 1, 1)).strftime("%m")
-    next_year = (datetime.datetime(int(year) + 1, 1, 1) if month == "12" else datetime.datetime(int(year), int(month) + 1, 1)).strftime("%Y")
-
-    dates = {"current_month": current_month, "current_year": current_year,
-             "previous_month_name": previous_month_name, "previous_year": previous_year,
-             "previous_month_num": previous_month_num,
-             "next_month_name": next_month_name, "next_year": next_year, "next_month_num": next_month_num}
+        dates = getDates(month, year)
 
     context = {"budgets": budget_objects, "actuals": actual_amounts, "dates": dates}
 
