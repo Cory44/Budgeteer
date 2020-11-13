@@ -9,6 +9,16 @@ main {
     flex: 1 0 auto;
 }
 
+#nav-dislay-name {
+    min-width: 150px;
+}
+
+/* Add Transaction View */
+#add-transaction {
+    font-size: 80% !important;
+}
+
+/* Edit Budget Categories View */
 .category {
     margin-top: 15px;
 }
@@ -17,13 +27,15 @@ main {
     margin: 10px 0 10px 0;
 }
 
-#add-transaction {
-    font-size: 80% !important;
-}
-#nav-dislay-name {
-    min-width: 150px;
+/* Budget View */
+.budget-nav-labels {
+    margin: 0;
 }
 
-p.budget-navigation {
-    margin: 0;
+.budget-navigation {
+    margin: 20px 0;
+}
+
+.budget-content {
+    margin-top: 50px;
 }

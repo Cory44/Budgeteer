@@ -1,32 +1,46 @@
 {% extends 'budgeteer/app.html' %}
 
 {% block content %}
-    <div class="row">
 
-        <div class="col s12 center-align">
-            <h5>Budget</h5>
-        </div>
-        <div>
+    <div class="center-align">
+        <h3>Budget</h3>
+    </div>
+
+    <div class="row">
+        <div class="budget-navigation col s12 m8 offset-m2 row valign-wrapper">
             <div class="col s4 left-align">
                 <a href="/{{ request.user.username }}/budget/{{ dates.previous_year }}/{{ dates.previous_month_num }}"
                    class="teal lighten-4 teal-text text-lighten-1 waves-effect waves-light btn">
-                    <p class="valign-wrapper budget-navigation"><i class="material-icons">navigate_before</i> {{ dates.previous_month_name }} {{ dates.previous_year }}</p>
+                    <p class="valign-wrapper budget-nav-labels"><i class="material-icons">navigate_before</i> {{ dates.previous_month_name }} {{ dates.previous_year }}</p>
                 </a>
             </div>
-            <div class="col s4 center-align"><h6>{{ dates.current_month }} {{ dates.current_year }}</h6></div>
+            <div class="col s4 center-align"><h5>{{ dates.current_month }} {{ dates.current_year }}</h5></div>
             <div class="col s4 right-align">
                 <a href="/{{ request.user.username }}/budget/{{ dates.next_year }}/{{ dates.next_month_num }}"
                    class="teal lighten-4 teal-text text-lighten-1 waves-effect waves-light btn">
-                    <p class="valign-wrapper budget-navigation">{{ dates.next_month_name }} {{ dates.next_year }}<i class="material-icons">navigate_next</i></p>
+                    <p class="valign-wrapper budget-nav-labels">{{ dates.next_month_name }} {{ dates.next_year }}<i class="material-icons">navigate_next</i></p>
                 </a>
             </div>
         </div>
-        {% for budget in budgets %}
-            <div class="col s3">{{ budget.transaction_category }}</div>
-            <div class="col s3">{{ budget.period}}</div>
-            <div class="col s3">{{ budget.amount }}</div>
-            <div class="col s3">{{ actuals|get_item:budget.transaction_category.category }}</div>
-        {% endfor %}
+    </div>
+
+    <div class="row budget-content">
+        <div class="col s12 m8 offset-m2 row">
+            <div class="col s3"><strong>Category</strong></div>
+{#            <div class="col s3"><strong>Period</strong></div>#}
+            <div class="col s3 center-align"><strong>Budget Amount</strong></div>
+            <div class="col s3 center-align"><strong>Actual Amount</strong></div>
+            <div class="col s3 center-align"><strong>Difference</strong></div>
+        </div>
+
+        <div class="col s12 m8 offset-m2 row">
+            {% for budget in budgets %}
+                <div class="col s3">{{ budget.transaction_category }}</div>
+{#                <div class="col s3">{{ budget.period}}</div>#}
+                <div class="col s3 center-align">{{ budget.amount }}</div>
+                <div class="col s3 center-align">{{ actuals|get_item:budget.transaction_category.category }}</div>
+                <div class="col s3 center-align">{{ actuals|get_item:budget.transaction_category.category|sub:budget.amount }}</div>
+            {% endfor %}
         </div>
     </div>
 
